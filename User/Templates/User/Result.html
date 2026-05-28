@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Stress Result</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+
+    {% extends 'User/Head.html' %}
+    {% load static %}
+    {% block content %}
+
+    <style>
+        /* Clean and Attractive Design */
+        body {
+            background: #fafafa;
+
+        }
+
+        .main-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Clean Result Card */
+        .result-card {
+            background: #ffffff;
+            padding: 48px 40px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px -10px rgba(111, 66, 193, 0.1);
+            text-align: center;
+            margin-bottom: 60px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .result-card h2 {
+            color: #6f42c1;
+            font-weight: 600;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+        }
+
+        /* Colorful Gauge Container */
+        .gauge-container {
+            position: relative;
+            width: 440px;
+            height: 240px;
+            margin: 0 auto 20px;
+        }
+
+        /* Colorful Gauge - Bold Colors */
+        .gauge {
+            width: 100%;
+            height: 220px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 440px 440px 0 0;
+            background: linear-gradient(90deg,
+                    #2ecc71 0%,
+                    /* Vibrant green */
+                    #f1c40f 33.33%,
+                    /* Bright yellow */
+                    #e67e22 66.66%,
+                    /* Rich orange */
+                    #e74c3c 100%);
+            /* Bold red */
+            box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Clean white mask */
+        .gauge::after {
+            content: '';
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 330px;
+            height: 150px;
+            background: #ffffff;
+            border-radius: 330px 330px 0 0;
+        }
+
+        /* Bold Needle - Black */
+        .needle {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 3px;
+            height: 180px;
+            background: #000000;
+            transform-origin: bottom center;
+            transform: rotate(0deg);
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 15;
+            border-radius: 2px;
+        }
+
+        .needle::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -4px;
+            width: 11px;
+            height: 11px;
+            background: #000000;
+            border-radius: 50%;
+        }
+
+        /* Center Pin - Primary Color */
+        .pin {
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 22px;
+            height: 22px;
+            background: #ffffff;
+            border-radius: 50%;
+            z-index: 20;
+            border: 3px solid #6f42c1;
+            box-shadow: 0 2px 8px rgba(111, 66, 193, 0.2);
+        }
+
+        /* Clean Labels with Black Text */
+        .labels {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0 0;
+            padding: 0 5px;
+        }
+
+        .labels span {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #000000;
+            opacity: 0.7;
+            padding: 4px 0;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .labels span:hover {
+            opacity: 1;
+            border-bottom-color: #6f42c1;
+        }
+
+        /* Color indicators for labels */
+        .labels span:nth-child(1):hover {
+            border-bottom-color: #2ecc71;
+        }
+
+        .labels span:nth-child(2):hover {
+            border-bottom-color: #f1c40f;
+        }
+
+        .labels span:nth-child(3):hover {
+            border-bottom-color: #e67e22;
+        }
+
+        .labels span:nth-child(4):hover {
+            border-bottom-color: #e74c3c;
+        }
+
+        /* Stress Result */
+        .stress-result {
+            font-size: 2.8rem;
+            font-weight: 600;
+            color: #6f42c1;
+            margin: 20px 0 0;
+            letter-spacing: -0.02em;
+            display: inline-block;
+            padding: 8px 32px;
+            background: #f8f5ff;
+            border-radius: 60px;
+        }
+
+        /* Remedies Title */
+        .remedy-title {
+            text-align: center;
+            color: #6f42c1;
+            margin-bottom: 40px;
+            font-weight: 600;
+            font-size: 1.8rem;
+        }
+
+        /* Clean Remedy Cards */
+        .remedy-card {
+            background: #ffffff;
+            padding: 32px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            height: 100%;
+            border: 1px solid #f0f0f0;
+        }
+
+        .remedy-card:hover {
+            transform: translateY(-4px);
+            border-color: #6f42c1;
+            box-shadow: 0 15px 30px -12px rgba(111, 66, 193, 0.15);
+        }
+
+        .remedy-card h5 {
+            color: #6f42c1;
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+        }
+
+        .remedy-card p {
+            color: #333333;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* Clean Action Buttons */
+        .action-buttons {
+            text-align: center;
+            margin-top: 60px;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            display: inline-block;
+            padding: 14px 32px;
+            border-radius: 40px;
+            background: #6f42c1;
+            color: #ffffff;
+            font-weight: 500;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .action-btn:hover {
+            background: #5a32a3;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -8px #6f42c1;
+        }
+
+        .action-btn.secondary {
+            background: transparent;
+            color: #6f42c1;
+            border: 1px solid #6f42c1;
+        }
+
+        .action-btn.secondary:hover {
+            background: #f8f5ff;
+            transform: translateY(-2px);
+            box-shadow: none;
+        }
+
+        /* Simple Gradient Bar */
+        .gradient-bar {
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #2ecc71, #f1c40f, #e67e22, #e74c3c);
+            margin: 20px 0 8px;
+            border-radius: 2px;
+        }
+
+        /* Level Indicators */
+        .level-indicator {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 4px;
+            font-size: 0.7rem;
+            color: #696371;
+            font-weight: 500;
+        }
+
+        /* Metric Badge */
+        .metric-badge {
+            display: inline-block;
+            padding: 4px 16px;
+            border-radius: 30px;
+            background: #f0f0f0;
+            color: #696371;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin: 15px 0 5px;
+            letter-spacing: 0.3px;
+        }
+
+        /* Scale Markers */
+        .scale-markers {
+            position: absolute;
+            bottom: 15px;
+            left: 25px;
+            right: 25px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 10;
+        }
+
+        .marker {
+            width: 1px;
+            height: 10px;
+            background: #999999;
+            opacity: 0.3;
+        }
+
+        .marker.main {
+            height: 15px;
+            background: #6f42c1;
+            opacity: 0.4;
+        }
+
+        /* Debug */
+        .debug-info {
+            font-size: 0.7rem;
+            color: #999;
+            margin-top: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .result-card {
+                padding: 32px 20px;
+            }
+
+            .gauge-container {
+                width: 100%;
+                max-width: 360px;
+                height: auto;
+            }
+
+            .gauge {
+                height: 180px;
+            }
+
+            .gauge::after {
+                width: 270px;
+                height: 125px;
+            }
+
+            .stress-result {
+                font-size: 2.2rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .action-btn {
+                width: 100%;
+                max-width: 280px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="main-container">
+
+        <!-- Clean Result Card -->
+        <div class="result-card">
+
+            <h2>Your Stress Level</h2>
+
+            <!-- Colorful Gauge -->
+            <div class="gauge-container">
+                <div class="gauge"></div>
+
+                <!-- Black Needle -->
+                <div class="needle" id="stressNeedle"></div>
+                <div class="pin"></div>
+
+                <!-- Scale Markers -->
+                <div class="scale-markers">
+                    <span class="marker main"></span>
+                    <span class="marker"></span>
+                    <span class="marker"></span>
+                    <span class="marker main"></span>
+                    <span class="marker"></span>
+                    <span class="marker"></span>
+                    <span class="marker main"></span>
+                    <span class="marker"></span>
+                    <span class="marker"></span>
+                    <span class="marker main"></span>
+                </div>
+
+                <!-- Labels with Black Text -->
+                <div class="labels">
+                    <span>LOW</span>
+                    <span>MODERATE</span>
+                    <span>HIGH</span>
+                    <span>SEVERE</span>
+                </div>
+            </div>
+
+            <!-- Color Gradient Bar -->
+            <div class="gradient-bar"></div>
+            <div class="level-indicator">
+                <span>0</span>
+                <span>25</span>
+                <span>50</span>
+                <span>75</span>
+                <span>100</span>
+            </div>
+
+            <!-- Metric Badge -->
+            <div class="metric-badge">Current Assessment</div>
+
+            <!-- Result with Primary Color -->
+            <h3 class="stress-result" id="stressResult">{{ result }}</h3>
+
+            <!-- Debug Info (remove in production) -->
+            <div class="debug-info" id="debugInfo">Loading...</div>
+
+        </div>
+
+        <!-- Remedies Title -->
+        <h2 class="remedy-title">Recommended for You</h2>
+
+        <!-- Remedy Cards -->
+        <div class="row g-4">
+
+            {% for i in remedies %}
+
+            <div class="col-md-6">
+
+                <div class="remedy-card">
+
+                    <h5>{{ i.remedies_title }}</h5>
+
+                    <p>{{ i.remedies_description }}</p>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+
+            <a href="{% url 'User:breathex' %}" class="action-btn">Breathing Exercise</a>
+
+            <!-- <a href="" class="action-btn secondary">Mandala Activity</a> -->
+
+            <a href="{% url 'User:ViewPsychologist' %}" class="action-btn">Consult Psychologist</a>
+
+        </div>
+
+    </div>
+
+    <script>
+        // Working Needle - Properly Positioned
+        (function () {
+            // Get stress level - for testing, you can change this value
+            const stressLevel = "{{ result }}";
+            // Test values - uncomment to test each position
+            console.log(stressLevel)
+
+            // Angle mapping (0° = far left/green, 180° = far right/red)
+            const angleMap = {
+                "Low Stress": -80,      // Points to center of green zone (0-45°)
+                "Moderate Stress": -30,  // Points to center of yellow zone (45-90°)
+                "High Stress": 30,     // Points to center of orange zone (90-135°)
+                "Severe Stress": 80    // Points to center of red zone (135-180°)
+            };
+
+            // Default to Moderate if not found
+            let angle = angleMap[stressLevel] || 67.5;
+
+            // Apply to needle
+            const needle = document.getElementById('stressNeedle');
+            if (needle) {
+                needle.style.transform = `rotate(${angle}deg)`;
+                console.log(`Needle set to ${angle}° for ${stressLevel}`);
+            }
+
+            // Update debug info
+            const debugEl = document.getElementById('debugInfo');
+            if (debugEl) {
+                debugEl.textContent = `${stressLevel} stress level | Needle at ${angle}°`;
+            }
+        })();
+
+        // Fallback - ensures needle works even if template tags don't render
+        setTimeout(function () {
+            const needle = document.getElementById('stressNeedle');
+            const resultEl = document.getElementById('stressResult');
+
+            if (needle && (!needle.style.transform || needle.style.transform === 'rotate(0deg)')) {
+                let stressLevel = 'Moderate';
+
+                if (resultEl) {
+                    const text = resultEl.textContent.trim();
+                    if (text === 'Low' || text === 'Moderate' || text === 'High' || text === 'Severe') {
+                        stressLevel = text;
+                    }
+                }
+
+                const angleMap = {
+                    "Low": 22.5,
+                    "Moderate": 67.5,
+                    "High": 112.5,
+                    "Severe": 157.5
+                };
+
+                needle.style.transform = `rotate(${angleMap[stressLevel]}deg)`;
+                console.log(`Fallback: Needle set to ${angleMap[stressLevel]}° for ${stressLevel}`);
+            }
+        }, 100);
+    </script>
+
+</body>
+
+</html>
+
+{% endblock content %}

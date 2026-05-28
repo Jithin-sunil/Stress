@@ -1,0 +1,361 @@
+{% extends 'User/Head.html' %}
+{% block content %}
+
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+    integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+<style>
+    body {
+        background: #f2f4f7;
+        font-family: Arial, sans-serif;
+        padding: 40px 0;
+    }
+
+    .text-warning {
+        color: orange;
+    }
+
+    .page-title {
+        text-align: center;
+        color: #435ebe;
+        font-size: 32px;
+        font-weight: 600;
+        margin-bottom: 30px;
+    }
+
+
+    /* Filter Card */
+
+    .filter-card {
+
+        max-width: 700px;
+
+        margin: auto;
+
+        background: white;
+
+        padding: 30px;
+
+        border-radius: 20px;
+
+        box-shadow:
+            0 4px 20px rgba(0, 0, 0, .06);
+
+        margin-bottom: 40px;
+    }
+
+    .filter-table {
+
+        width: 100%;
+
+        border-spacing: 0 20px;
+    }
+
+    .filter-table td:first-child {
+
+        font-weight: 600;
+
+        color: #25396f;
+
+        width: 120px;
+    }
+
+    .filter-table select {
+
+        width: 100%;
+
+        padding: 12px;
+
+        border: 1px solid #dce7f1;
+
+        border-radius: 10px;
+
+        background: #fafbff;
+
+        outline: none;
+    }
+
+
+    /* Psychologist Grid */
+
+    .psychologist-grid {
+
+        max-width: 1200px;
+
+        margin: auto;
+
+        display: grid;
+
+        grid-template-columns:
+            repeat(auto-fit, minmax(280px, 1fr));
+
+        gap: 25px;
+    }
+
+
+    .psychologist-card {
+
+        background: white;
+
+        padding: 25px;
+
+        border-radius: 18px;
+
+        text-align: center;
+
+        box-shadow:
+            0 4px 20px rgba(0, 0, 0, .06);
+
+        transition: .3s;
+    }
+
+    .psychologist-card:hover {
+
+        transform: translateY(-5px);
+    }
+
+
+    .profile-img {
+
+        width: 120px;
+
+        height: 120px;
+
+        border-radius: 50%;
+
+        object-fit: cover;
+
+        border: 4px solid #e7ecff;
+
+        margin-bottom: 15px;
+    }
+
+    .psychologist-name {
+
+        font-size: 22px;
+
+        font-weight: 600;
+
+        color: #25396f;
+
+        margin-bottom: 10px;
+    }
+
+    .info {
+
+        color: #6c757d;
+
+        margin: 6px 0;
+    }
+
+    .slot-btn {
+
+        display: inline-block;
+
+        margin-top: 15px;
+
+        background: #435ebe;
+
+        color: white;
+
+        text-decoration: none;
+
+        padding: 10px 18px;
+
+        border-radius: 8px;
+
+        font-weight: 600;
+    }
+
+    .slot-btn:hover {
+
+        background: #364b98;
+    }
+</style>
+
+
+
+<form action="" method="post" enctype="multipart/form-data">
+
+    {% csrf_token %}
+
+    <h1 class="page-title">
+
+        View Psychologist
+
+    </h1>
+
+
+    <div class="filter-card">
+
+        <table class="filter-table">
+
+            <tr>
+
+                <td>District</td>
+
+                <td>
+
+                    <select name="sel_district" id="sel_district">
+
+                        <option value="">
+
+                            -- Select District --
+
+                        </option>
+
+                        {% for i in districts %}
+
+                        <option value="{{i.id}}">
+
+                            {{i.district_name}}
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>Place</td>
+
+                <td>
+
+                    <select name="sel_place" id="sel_place">
+
+                        <option value="">
+
+                            -- Select Place --
+
+                        </option>
+
+                    </select>
+
+                </td>
+
+            </tr>
+
+        </table>
+
+    </div>
+
+</form>
+
+
+
+<div class="psychologist-grid" id="tabledata">
+
+    {% for i,j in psychologistdata %}
+
+    <div class="psychologist-card">
+
+        <img src="{{i.psychologist_photo.url}}" class="profile-img">
+
+
+        <div class="psychologist-name">
+
+            {{i.psychologist_name}}
+
+        </div>
+
+
+        <div class="info">
+
+            📧 {{i.psychologist_email}}
+
+        </div>
+
+        <div class="info">
+
+            📞 {{i.psychologist_contact}}
+
+        </div>
+
+        <div>
+
+            {% for k in ar %}
+            {% if k <= j %} <i class="fa-solid fa-star text-warning"></i>
+                {% else %}
+                <i class="fa-solid fa-star star-light"></i>
+                {% endif %}
+                {% endfor %}
+        </div>
+
+        <a href="{% url 'User:ViewSlot' i.id %}" class="slot-btn">
+
+            Book Appointment
+
+        </a>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js">
+</script>
+
+<script>
+
+    $("#sel_district").change(function () {
+
+        var did = $(this).val();
+
+        $.ajax({
+
+            url: "{% url 'Guest:Ajaxplace' %}",
+
+            data: { did: did },
+
+            success: function (data) {
+
+                $("#sel_place").html(data);
+
+            }
+
+        });
+
+    });
+
+
+
+    $("#sel_place,#sel_district").change(function () {
+
+        var pid = $("#sel_place").val();
+
+        var disid = $("#sel_district").val();
+
+        $.ajax({
+
+            url: "{% url 'User:Ajaxpsychologist' %}",
+
+            data: {
+
+                pid: pid,
+
+                disid: disid
+
+            },
+
+            success: function (data) {
+
+                $("#tabledata").html(data);
+
+            }
+
+        });
+
+    });
+
+</script>
+
+{% endblock content %}

@@ -1,0 +1,259 @@
+{% extends 'User/Head.html' %}
+{% block content %}
+
+<style>
+    body {
+        background: #f2f4f7;
+        font-family: Arial, sans-serif;
+        padding: 40px 0;
+    }
+
+    .page-title {
+        text-align: center;
+        color: #435ebe;
+        font-size: 32px;
+        font-weight: 600;
+        margin-bottom: 30px;
+    }
+
+    .table-card {
+        max-width: 1300px;
+        margin: auto;
+        background: white;
+        padding: 30px;
+        border-radius: 18px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, .06);
+
+        overflow-x: auto;
+    }
+
+    .booking-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .booking-table th {
+        background: #435ebe;
+        color: white;
+        padding: 16px;
+        text-align: center;
+    }
+
+    .booking-table td {
+        padding: 16px;
+        text-align: center;
+        border-bottom: 1px solid #edf2f7;
+    }
+
+    .booking-table tr:nth-child(even) {
+        background: #fafbff;
+    }
+
+
+    /* Status Badges */
+
+    .status {
+
+        padding: 8px 14px;
+
+        border-radius: 20px;
+
+        font-size: 13px;
+
+        color: white;
+
+        font-weight: 600;
+
+    }
+
+    .accepted {
+        background: #22c55e;
+    }
+
+    .rejected {
+        background: #ef4444;
+    }
+
+    .fee {
+        background: #f59e0b;
+    }
+
+    .booked {
+        background: #435ebe;
+    }
+
+    .nil {
+        background: #6c757d;
+    }
+
+
+    /* Button */
+
+    .pay-btn {
+
+        background: #435ebe;
+
+        color: white;
+
+        padding: 10px 16px;
+
+        border-radius: 8px;
+
+        text-decoration: none;
+
+        font-weight: 600;
+
+    }
+
+    .pay-btn:hover {
+        background: #364b98;
+    }
+</style>
+
+
+
+<form action="" method="post">
+
+    {% csrf_token %}
+
+    <h1 class="page-title">
+
+        My Booking
+
+    </h1>
+
+
+    <div class="table-card">
+
+        <table class="booking-table">
+
+            <tr>
+
+                <th>SNo</th>
+                <th>Booking Date</th>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Slot Time</th>
+                <th>Psychologist</th>
+                <th>Status</th>
+                <th>Action</th>
+
+            </tr>
+
+            {% for i in bookingdata %}
+
+            <tr>
+
+                <td>{{forloop.counter}}</td>
+
+                <td>{{i.booking_date}}</td>
+
+                <td>{{i.booking_description}}</td>
+
+                <td>{{i.booking_amount}}</td>
+
+                <td>
+
+                    {{i.slot_id.slot_fromtime}}
+
+                    -
+
+                    {{i.slot_id.slot_totime}}
+
+                </td>
+
+                <td>
+
+                    {{i.slot_id.psychologist_id.psychologist_name}}
+
+                </td>
+
+
+                <td>
+
+                    {% if i.booking_status == 1 %}
+
+                    <span class="status accepted">
+
+                        Accepted
+
+                    </span>
+
+                    {% elif i.booking_status == 2 %}
+
+                    <span class="status rejected">
+
+                        Rejected
+
+                    </span>
+
+                    {% elif i.booking_status == 3 %}
+
+                    <span class="status fee">
+
+                        Fee Added
+
+                    </span>
+
+                    {% elif i.booking_status == 4 %}
+
+                    <span class="status booked">
+
+                        Booked
+
+                    </span>
+
+                    {% elif i.booking_status == 5 %}
+
+                    <span class="status booked">
+
+                        Booking Completed..
+
+                    </span>
+
+                    <a href="{% url 'User:Rating' i.slot_id.psychologist_id.id %}">Rating</a>
+
+
+
+                    {% else %}
+
+                    <span class="status nil">
+
+                        Nil
+
+                    </span>
+
+                    {% endif %}
+
+                </td>
+
+
+                <td>
+
+                    {% if i.booking_status == 3 %}
+
+                    <a href="{% url 'User:Payment' i.id %}" class="pay-btn">
+
+                        Pay Now
+
+                    </a>
+
+                    {% else %}
+
+                    —
+
+                    {% endif %}
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+    </div>
+
+</form>
+
+{% endblock content %}

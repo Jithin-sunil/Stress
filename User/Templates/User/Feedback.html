@@ -1,0 +1,260 @@
+{% extends 'User/Head.html' %}
+{% block content %}
+
+<style>
+
+body{
+    background:#f2f4f7;
+    font-family:Arial,sans-serif;
+    padding:40px 0;
+}
+
+/* Form Card */
+
+.feedback-card{
+    max-width:750px;
+    margin:auto;
+    background:white;
+    padding:35px;
+    border-radius:18px;
+    box-shadow:0 4px 20px rgba(0,0,0,.06);
+    margin-bottom:40px;
+}
+
+.page-title{
+    text-align:center;
+    color:#435ebe;
+    font-size:32px;
+    font-weight:600;
+    margin-bottom:25px;
+}
+
+.feedback-table{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0 20px;
+}
+
+.feedback-table td:first-child{
+    width:150px;
+    color:#25396f;
+    font-weight:600;
+}
+
+.feedback-table input{
+    width:100%;
+    padding:14px;
+    border:1px solid #dce7f1;
+    border-radius:10px;
+    background:#fafbff;
+    outline:none;
+    transition:.3s;
+}
+
+.feedback-table input:focus{
+    border-color:#435ebe;
+    box-shadow:0 0 0 3px rgba(67,94,190,.15);
+}
+
+.submit-btn{
+    background:#435ebe;
+    color:white;
+    border:none;
+    padding:12px 28px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.submit-btn:hover{
+    background:#364b98;
+}
+
+
+/* Feedback List */
+
+.table-card{
+    max-width:1000px;
+    margin:auto;
+    background:white;
+    padding:30px;
+    border-radius:18px;
+    box-shadow:0 4px 20px rgba(0,0,0,.06);
+
+    overflow-x:auto;
+}
+
+.list-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.list-table th{
+    background:#435ebe;
+    color:white;
+    padding:16px;
+    text-align:center;
+}
+
+.list-table td{
+    padding:16px;
+    text-align:center;
+    border-bottom:1px solid #edf2f7;
+}
+
+.list-table tr:nth-child(even){
+    background:#fafbff;
+}
+
+.feedback-box{
+    background:#eef3ff;
+    color:#25396f;
+    padding:10px;
+    border-radius:10px;
+}
+
+.date-badge{
+    background:#22c55e;
+    color:white;
+    padding:8px 12px;
+    border-radius:20px;
+    font-size:13px;
+}
+
+.delete-btn{
+    background:#dc3545;
+    color:white;
+    text-decoration:none;
+    padding:8px 14px;
+    border-radius:8px;
+}
+
+.delete-btn:hover{
+    background:#bb2d3b;
+}
+
+</style>
+
+
+
+<div class="feedback-card">
+
+<h1 class="page-title">
+
+Feedback
+
+</h1>
+
+<form action="" method="post">
+
+{% csrf_token %}
+
+<table class="feedback-table">
+
+<tr>
+
+<td>Content</td>
+
+<td>
+
+<input type="text"
+
+name="txt_content"
+
+required
+
+placeholder="Enter your feedback">
+
+</td>
+
+</tr>
+
+<tr>
+
+<td colspan="2" align="center">
+
+<input type="submit"
+
+value="Submit"
+
+class="submit-btn">
+
+</td>
+
+</tr>
+
+</table>
+
+</div>
+
+
+
+<div class="table-card">
+
+<table class="list-table">
+
+<tr>
+
+<th>SNo</th>
+<th>Content</th>
+<th>Date</th>
+<th>Action</th>
+
+</tr>
+
+{% for i in userdata %}
+
+<tr>
+
+<td>{{forloop.counter}}</td>
+
+<td>
+
+<div class="feedback-box">
+
+{{i.feedback_content}}
+
+</div>
+
+</td>
+
+<td>
+
+<span class="date-badge">
+
+{{i.feedback_date}}
+
+</span>
+
+</td>
+
+<td>
+
+<a href="{% url 'User:delfeedback' i.id %}"
+
+class="delete-btn">
+
+Delete
+
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+</form>
+
+
+{% if msg %}
+<script>
+alert("{{msg}}")
+window.location="{% url 'User:Feedback' %}"
+</script>
+{% endif %}
+
+{% endblock content %}

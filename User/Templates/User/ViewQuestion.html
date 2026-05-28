@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Stress Test</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+{% extends 'User/Head.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+
+body{
+    background:#faf9fb;
+}
+
+/* container */
+.dgfjfdtrdb {
+    max-width:750px;
+}
+
+/* heading */
+
+h3{
+    color:#6f42c1;
+    font-weight:700;
+    letter-spacing:.5px;
+}
+
+.subtitle{
+    font-size:14px;
+    color:#696371;
+    margin-bottom:40px;
+}
+
+/* question card */
+
+.question-card{
+    border:none;
+    border-bottom:3px solid #800020;
+    border-radius:0;
+    background:transparent;
+    box-shadow:none;
+    padding-bottom:20px;
+    text-align:left; /* force left alignment */
+}
+
+/* FIXED ALIGNMENT */
+
+.card-body{
+    padding-left:0;
+    padding-right:0;
+    text-align:left;
+}
+
+.card-body h5{
+    font-weight:600;
+    font-size:18px;
+    color:#333;
+    margin-bottom:8px;
+    text-align:left;
+}
+
+.text-muted{
+    font-size:14px;
+    text-align:left;
+}
+
+/* options */
+
+.option-card{
+    border:1px solid #e9e6f2;
+    border-radius:8px;
+    padding:12px 14px;
+    margin-bottom:10px;
+    cursor:pointer;
+    transition:.2s;
+    background:#ffffff;
+    display:flex;
+    align-items:center;
+    justify-content:flex-start; /* align radio + text left */
+}
+
+.option-card:hover{
+    border-color:#6f42c1;
+    background:#f6f3ff;
+}
+
+.option-card input[type="radio"]{
+    margin-right:10px;
+    accent-color:#6f42c1;
+    transform:scale(1.15);
+}
+
+/* submit button */
+
+.submit-btn{
+    width:200px;
+    padding:12px;
+    border-radius:25px;
+    border:none;
+    font-weight:600;
+    background:#6f42c1;
+    transition:.25s;
+}
+
+.submit-btn:hover{
+    background:#5931a8;
+    box-shadow:0 6px 16px rgba(0,0,0,0.15);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="dgfjfdtrdb my-5 mx-auto">
+
+<h3 class="text-center mb-1">Stress Test</h3>
+<p class="text-center subtitle">Nivara AI Stress Self Assessment</p>
+
+<form method="POST">
+{% csrf_token %}
+
+{% for q in questions %}
+<div class="card question-card mb-4">
+<div class="card-body">
+
+<h5>Q{{ forloop.counter }}. {{ q.question_title }}</h5>
+
+<p class="text-muted">{{ q.question_description }}</p>
+
+{% for opt in q.tbl_option_set.all %}
+<label class="option-card w-100">
+<input type="radio"
+name="question_{{ q.id }}"
+value="{{ opt.stress_weight }}"
+required>
+{{ opt.option_content }}
+</label>
+{% endfor %}
+
+</div>
+</div>
+{% endfor %}
+
+<div class="text-center">
+<button type="submit" class="btn btn-primary submit-btn">
+Submit
+</button>
+</div>
+
+</form>
+
+</div>
+
+</body>
+</html>
+
+{% endblock content %}

@@ -1,0 +1,344 @@
+{% extends 'Guest/Head.html' %}
+{% block content %}
+
+<style>
+    .register-section {
+        min-height: 100vh;
+        background: #f4f8fb;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 0;
+    }
+
+    .register-card {
+
+        background: white;
+        width: 650px;
+
+        padding: 40px;
+
+        border-radius: 20px;
+
+        box-shadow:
+            0 10px 30px rgba(0, 0, 0, .08);
+    }
+
+
+    .title {
+
+        text-align: center;
+
+        font-size: 34px;
+
+        font-weight: 700;
+
+        color: #0d6efd;
+    }
+
+
+    .subtitle {
+
+        text-align: center;
+
+        color: gray;
+
+        margin-bottom: 30px;
+    }
+
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+
+    label {
+
+        display: block;
+
+        font-weight: 600;
+
+        margin-bottom: 8px;
+    }
+
+
+    input,
+    textarea,
+    select {
+
+        width: 100%;
+
+        padding: 12px;
+
+        border: 1px solid #ddd;
+
+        border-radius: 10px;
+
+        outline: none;
+    }
+
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+
+        border-color: #0d6efd;
+
+        box-shadow:
+            0 0 8px rgba(13, 110, 253, .2);
+    }
+
+
+    .button-group {
+
+        display: flex;
+
+        gap: 10px;
+
+        margin-top: 25px;
+    }
+
+
+    .submit-btn {
+
+        flex: 1;
+
+        background: #0d6efd;
+
+        color: white;
+
+        padding: 12px;
+
+        border: none;
+
+        border-radius: 10px;
+
+        font-weight: 600;
+    }
+
+
+    .reset-btn {
+
+        flex: 1;
+
+        background: #dee2e6;
+
+        padding: 12px;
+
+        border: none;
+
+        border-radius: 10px;
+    }
+
+
+    .submit-btn:hover {
+        background: #0b5ed7;
+    }
+</style>
+
+
+
+<div class="register-section">
+
+    <div class="register-card">
+
+        <h2 class="title">
+            Psychologist Registration
+        </h2>
+
+        <p class="subtitle">
+            Join Mindlytics as a mental wellness expert
+        </p>
+
+
+        <form action="" method="post" enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+
+
+            <div class="form-group">
+
+                <label>Name</label>
+
+                <input type="text" name="txt_name" pattern="^[A-Z]+[a-zA-Z ]*$" placeholder="Enter name" required>
+
+            </div>
+
+
+
+            <div class="form-group">
+
+                <label>Email</label>
+
+                <input type="email" name="txt_email" required>
+
+            </div>
+
+
+
+            <div class="form-group">
+
+                <label>Contact</label>
+
+                <input type="text" name="txt_contact" pattern="[6-9]{1}[0-9]{9}" required>
+
+            </div>
+
+
+
+            <div class="form-group">
+
+                <label>Address</label>
+
+                <textarea name="txt_address" rows="3" required>
+
+</textarea>
+
+            </div>
+
+
+
+            <div class="form-group">
+
+                <label>District</label>
+
+                <select name="sel_district" id="sel_district">
+
+                    <option>
+                        Select District
+                    </option>
+
+                    {% for i in districts %}
+
+                    <option value="{{i.id}}">
+                        {{i.district_name}}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+
+            <div class="form-group">
+
+                <label>Place</label>
+
+                <select name="sel_place" id="sel_place">
+
+                    <option>
+
+                        Select Place
+
+                    </option>
+
+                </select>
+
+            </div>
+
+
+
+            <div class="form-group">
+
+                <label>Photo</label>
+
+                <input type="file" name="photo" accept="image/*" required>
+
+            </div>
+
+
+
+            <div class="form-group">
+
+                <label>Proof Document</label>
+
+                <input type="file" name="proof" required>
+
+            </div>
+
+
+
+            <div class="form-group">
+
+                <label>Password</label>
+
+                <input type="password" name="txt_password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+
+            </div>
+
+
+
+            <div class="button-group">
+
+                <button type="submit" class="submit-btn">
+
+                    Register
+
+                </button>
+
+
+                <button type="reset" class="reset-btn">
+
+                    Cancel
+
+                </button>
+
+            </div>
+
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js">
+</script>
+
+
+<script>
+
+    $("#sel_district").change(function () {
+
+        var did = $(this).val();
+
+        $.ajax({
+
+            url: "{% url 'Guest:Ajaxplace' %}",
+
+            data: { did: did },
+
+            success: function (data) {
+
+                $("#sel_place").html(data);
+
+            }
+
+        });
+
+    });
+
+</script>
+
+
+
+{% if msg %}
+
+<script>
+
+    alert("{{msg}}");
+
+    window.location =
+        "{% url 'Guest:PsychologistRegistration' %}"
+
+</script>
+
+{% endif %}
+
+
+{% endblock %}

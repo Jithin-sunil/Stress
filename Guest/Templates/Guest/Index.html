@@ -1,0 +1,1447 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<style>
+    :root {
+        --color-vlow: #a2daf9;
+        --color-low: #54b2f1;
+        --color-mod: #0081e3;
+        --color-high: #004baf;
+        --color-vhigh: #002159;
+        --text-dark: #1e293b;
+    }
+
+    
+
+    .cont {
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        max-width: 850px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .subtitle {
+        color: #64748b;
+        font-size: 1.1rem;
+        margin-bottom: 30px;
+        letter-spacing: 0.5px;
+    }
+
+    /* Gauge Layout - Hover zone restricted here */
+    .gauge-wrap {
+        position: relative;
+        width: 600px;
+        height: 300px;
+        margin: 0 auto 40px auto;
+        overflow: hidden;
+        cursor: pointer;
+    }
+
+    .gauge-bg {
+        position: absolute;
+        width: 600px;
+        height: 600px;
+        border-radius: 50%;
+        background: conic-gradient(from 270deg,
+                var(--color-vlow) 0deg 36deg,
+                var(--color-low) 36deg 72deg,
+                var(--color-mod) 72deg 108deg,
+                var(--color-high) 108deg 144deg,
+                var(--color-vhigh) 144deg 180deg,
+                transparent 180deg 360deg);
+        mask: radial-gradient(circle at 50% 50%, transparent 58%, black 58.5%);
+        -webkit-mask: radial-gradient(circle at 300px 300px, transparent 180px, black 181px);
+    }
+
+    .labels-container {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+    }
+
+    .segment-label {
+        position: absolute;
+        color: white;
+        text-align: center;
+        font-weight: bold;
+        font-size: 0.85rem;
+        line-height: 1.3;
+    }
+
+    .segment-label span {
+        display: block;
+        font-size: 1.1rem;
+        margin-bottom: 2px;
+    }
+
+    .segment-label p {
+        margin: 4px 0 0 0;
+        font-weight: normal;
+        font-size: 0.7rem;
+        opacity: 0.9;
+    }
+
+    .lbl-vlow {
+        top: 140px;
+        left: 45px;
+        color: #002159;
+    }
+
+    .lbl-low {
+        top: 55px;
+        left: 145px;
+        color: #ffffff;
+    }
+
+    .lbl-mod {
+        top: 25px;
+        left: 255px;
+        color: #ffffff;
+    }
+
+    .lbl-high {
+        top: 55px;
+        left: 365px;
+        color: #ffffff;
+    }
+
+    .lbl-vhigh {
+        top: 140px;
+        left: 465px;
+        color: #ffffff;
+    }
+
+    .score-display {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
+        pointer-events: none;
+    }
+
+    .score-title {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #64748b;
+        font-weight: 700;
+    }
+
+    .score-number {
+        font-size: 4.5rem;
+        font-weight: 800;
+        color: var(--color-vhigh);
+        line-height: 1;
+        margin: 5px 0;
+    }
+
+    .score-status {
+        background-color: var(--color-vhigh);
+        color: white;
+        padding: 6px 20px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        display: inline-block;
+    }
+
+    .needle-pivot {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        height: 0;
+        pointer-events: none;
+    }
+
+    .needle {
+        position: absolute;
+        bottom: -12px;
+        left: -12px;
+        width: 24px;
+        height: 24px;
+        background: #ffffff;
+        border: 6px solid var(--color-high);
+        border-radius: 50%;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        z-index: 10;
+        /* Transition handle creates smooth trailing oscillation */
+        transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+        transform-origin: 12px 12px;
+        transform: rotate(129.6deg);
+        /* 72% of 180deg default */
+    }
+
+    .needle::before {
+        content: '';
+        position: absolute;
+        bottom: 6px;
+        left: 2px;
+        width: 8px;
+        height: 220px;
+        background: linear-gradient(to top, var(--color-high), var(--color-low));
+        clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%);
+        transform-origin: center bottom;
+        transform: rotate(-90deg);
+    }
+
+    .tips-container {
+        border-top: 1px solid #e2e8f0;
+        padding-top: 25px;
+        margin-top: 20px;
+    }
+
+    .tips-title {
+        text-align: left;
+        font-size: 0.9rem;
+        font-weight: 800;
+        color: var(--color-vhigh);
+        letter-spacing: 0.5px;
+        margin-bottom: 20px;
+    }
+
+    .tips-grid {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        text-align: left;
+    }
+
+    .tip-col {
+        flex: 1;
+        border-right: 1px solid #e2e8f0;
+        padding-right: 10px;
+    }
+
+    .tip-col:last-child {
+        border-right: none;
+        padding-right: 0;
+    }
+
+    .tip-col h4 {
+        margin: 0 0 5px 0;
+        font-size: 0.8rem;
+        color: var(--color-mod);
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
+    .tip-col p {
+        margin: 0;
+        font-size: 0.75rem;
+        color: #64748b;
+        line-height: 1.4;
+    }
+
+    .footer-note {
+        margin-top: 30px;
+        font-size: 0.85rem;
+        color: var(--color-mod);
+        font-weight: 500;
+    }
+
+    .main-header {
+        color: var(--color-vhigh);
+        font-size: 3rem;
+        font-weight: 900;
+        margin: 25px 0 0 0;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+</style>
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Index - Medilab Bootstrap Template</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+
+    <!-- Favicons -->
+    <link href="{% static 'Main/assets/img/favicon.png' %}" rel="icon">
+    <link href="{% static 'Main/assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="{% static 'Main/assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'Main/assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+    <link href="{% static 'Main/assets/vendor/aos/aos.css' %}" rel="stylesheet">
+    <link href="{% static 'Main/assets/vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+    <link href="{% static 'Main/assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+    <link href="{% static 'Main/assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+
+    <!-- Main CSS File -->
+    <link href="{% static 'Main/assets/css/main.css' %}" rel="stylesheet">
+
+    <!-- =======================================================
+  * Template Name: Medilab
+  * Template URL: https://bootstrapmade.com/medilab-free-medical-bootstrap-theme/
+  * Updated: Aug 07 2024 with Bootstrap v5.3.3
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+<body class="index-page">
+
+    <header id="header" class="header sticky-top">
+
+        <div class="topbar d-flex align-items-center">
+            <div class="container d-flex justify-content-center justify-content-md-between">
+                <div class="contact-info d-flex align-items-center">
+                    <i class="bi bi-envelope d-flex align-items-center"><a
+                            href="mailto:contact@example.com">contact@example.com</a></i>
+                    <i class="bi bi-phone d-flex align-items-center ms-4"><span>+1 5589 55488 55</span></i>
+                </div>
+                <div class="social-links d-none d-md-flex align-items-center">
+                    <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
+                    <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+                </div>
+            </div>
+        </div><!-- End Top Bar -->
+
+        <div class="branding d-flex align-items-center">
+
+            <div class="container position-relative d-flex align-items-center justify-content-between">
+                <a href="index.html" class="logo d-flex align-items-center me-auto">
+                    <!-- Uncomment the line below if you also wish to use an image logo -->
+                    <!-- <img src="assets/img/logo.png" alt=""> -->
+                    <h1 class="sitename">MINDLYTICS</h1>
+                </a>
+
+                <nav id="navmenu" class="navmenu">
+                    <ul>
+                        <li><a href="#hero" class="active">Home<br></a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#services">Services</a></li>
+                        <li><a href="#departments">Departments</a></li>
+                        <li><a href="#doctors">Doctors</a></li>
+                        
+                <nav id="navmenu" class="navmenu">
+                    <ul>
+                        <li class="dropdown"><a href=><span>Stress Test</span> <i
+                                    class="bi bi-chevron-down toggle-dropdown"></i></a>
+                            <ul>
+                                <li><a href="{% url 'User:choosetest' %}">Choose Test</a></li>
+                               
+                                <li><a href="{% url 'User:ViewStressResult' %}">Test Result</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+                </nav>
+                        <li class="dropdown"><a href="#"><span>Registration</span> <i
+                                    class="bi bi-chevron-down toggle-dropdown"></i></a>
+                            <ul>
+                                <li><a href="{% url 'Guest:NewUser' %}">User Registration</a></li>
+
+                                <li><a href="{% url 'Guest:PsychologistRegistration' %}">Psychologist Registration</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                    <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+                </nav>
+
+                <a class="cta-btn d-none d-sm-block" href="{% url 'Guest:Login' %}">Login</a>
+
+            </div>
+
+        </div>
+
+    </header>
+
+    <main class="main">
+
+        <!-- Hero Section -->
+        <section id="hero" class="hero section light-background">
+
+            <img src="{% static 'Main/assets/img/image1.png' %}" alt="" data-aos="fade-in">
+
+            <div class="container position-relative">
+
+                <div class="welcome position-relative" data-aos="fade-down" data-aos-delay="100">
+                    <h2>WELCOME TO MINDLYTICS</h2>
+                    <p>Because Every Feeling Matters....</p>
+                </div><!-- End Welcome -->
+
+                <div class="content row gy-4">
+                    <div class="col-lg-4 d-flex align-items-stretch">
+                        <div class="why-box" data-aos="zoom-out" data-aos-delay="200">
+                            <h3>Why Choose MindLytics</h3>
+                            <p>
+                                Mindlytics is a smart mental wellness platform that helps users identify stress levels,
+                                connect with psychologists, and manage appointments through a simple and secure system.
+                            </p>
+                            <div class="text-center">
+                                <a href="#about" class="more-btn"><span>Learn More</span> <i
+                                        class="bi bi-chevron-right"></i></a>
+                            </div>
+                        </div>
+                    </div><!-- End Why Box -->
+
+                    <div class="col-lg-8 d-flex align-items-stretch">
+                        <div class="d-flex flex-column justify-content-center">
+                            <div class="row gy-4">
+
+                                <div class="col-xl-4 d-flex align-items-stretch">
+                                    <div class="icon-box" data-aos="zoom-out" data-aos-delay="300">
+                                        <i class="bi bi-clipboard2-heart"></i>
+                                        <h4>OUR GOAL</h4>
+                                        <p>To empower individuals to take better care of their mental well-being through
+                                            stress assessment, self-care activities, and professional support services.
+                                        </p>
+                                    </div>
+                                </div><!-- End Icon Box -->
+
+                                <div class="col-xl-4 d-flex align-items-stretch">
+                                    <div class="icon-box" data-aos="zoom-out" data-aos-delay="400">
+                                        <i class="bi bi-bullseye"></i>
+                                        <h4>OUR MISSION</h4>
+                                        <p>To promote mental wellness by providing an accessible, technology-driven
+                                            platform that helps individuals detect stress early, receive personalized
+                                            guidance, and connect with professional support.</p>
+                                    </div>
+                                </div><!-- End Icon Box -->
+
+                                <div class="col-xl-4 d-flex align-items-stretch">
+                                    <div class="icon-box" data-aos="zoom-out" data-aos-delay="500">
+                                        <i class="bi bi-eye"></i>
+                                        <h4>OUR VISION</h4>
+                                        <p>To create a future where mental wellness support is easily available to
+                                            everyone through intelligent and user-friendly digital solutions.</p>
+                                    </div>
+                                </div><!-- End Icon Box -->
+
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- End  Content-->
+
+            </div>
+
+        </section><!-- /Hero Section -->
+
+        <!-- About Section -->
+       <section id="about" class="about section">
+
+            <div class="container">
+
+                <div class="row gy-4 gx-5">
+
+
+                    <!-- stress level -->
+                    <div class="col-lg-6 position-relative align-self-start" data-aos="fade-up" data-aos-delay="50">
+                        <div class="cont">
+                            <div class="subtitle">Track Your Stress. Manage Better. Live Healthier.</div>
+
+                            <div class="gauge-wrap" id="gaugeRegion">
+                                <div class="gauge-bg"></div>
+
+                                <div class="labels-container">
+                                    <div class="segment-label lbl-vlow">
+                                        <br><br>
+                                        <span>VERY LOW</span>0 - 20
+                                        <p>Relaxed and calm.<br>You feel in control.</p>
+                                    </div>
+                                    <div class="segment-label lbl-low">
+
+                                        <span align="left">LOW</span>
+                                        <p align="left">21 - 40 <br>Normal stress.<br>Manageable and balanced.</p>
+                                    </div>
+                                    <div class="segment-label lbl-mod">
+                                        <span>MODERATE</span>41 - 60
+                                        <p>Noticeable stress.<br>Be mindful and take care.</p>
+                                    </div>
+                                    <div class="segment-label lbl-high">
+                                        <span>HIGH</span>61 - 80
+                                        <p>High stress.<br>Reduce load and recharge.</p>
+                                    </div>
+                                    <div class="segment-label lbl-vhigh">
+                                        <br>
+                                        <span>VERY HIGH</span>81 - 100
+                                        <p>Extreme stress.<br>Seek support and take action.</p>
+                                    </div>
+                                </div>
+
+                                <div class="score-display">
+                                    <div class="score-title">Your Stress Score</div>
+                                    <div class="score-number" id="scoreNum">72</div>
+                                    <div class="score-status" id="scoreStatus">HIGH STRESS</div>
+                                </div>
+
+                                <div class="needle-pivot">
+                                    <div class="needle" id="gaugeNeedle"></div>
+                                </div>
+                            </div>
+
+
+
+                            <h1 class="main-header">Stress Level</h1>
+                        </div>
+
+                        <script>
+                            const gaugeRegion = document.getElementById('gaugeRegion');
+                            const needle = document.getElementById('gaugeNeedle');
+                            const scoreNum = document.getElementById('scoreNum');
+                            const scoreStatus = document.getElementById('scoreStatus');
+
+                            const statusTiers = [
+                                { max: 20, text: "VERY LOW", color: "#a2daf9" },
+                                { max: 40, text: "LOW", color: "#54b2f1" },
+                                { max: 60, text: "MODERATE", color: "#0081e3" },
+                                { max: 80, text: "HIGH STRESS", color: "#004baf" },
+                                { max: 100, text: "VERY HIGH", color: "#002159" }
+                            ];
+
+                            // Helper function to update text and tier background styles
+                            function updateGaugeDisplay(score) {
+                                scoreNum.innerText = score;
+                                for (let tier of statusTiers) {
+                                    if (score <= tier.max) {
+                                        scoreStatus.innerText = tier.text;
+                                        scoreStatus.style.backgroundColor = tier.color;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            // Tracks mouse ONLY within the gauge boundary box
+                            gaugeRegion.addEventListener('mousemove', (e) => {
+                                const rect = gaugeRegion.getBoundingClientRect();
+
+                                // Pin-point the center bottom origin point of the arc relative to view
+                                const pivotX = rect.left + (rect.width / 2);
+                                const pivotY = rect.bottom;
+
+                                const deltaX = e.clientX - pivotX;
+                                const deltaY = e.clientY - pivotY;
+
+                                let angleRad = Math.atan2(deltaY, deltaX);
+                                let angleDeg = angleRad * (180 / Math.PI);
+                                let realGaugeAngle = angleDeg + 180;
+
+                                // Clip constraints to keep the needle within the semicircular arc bounds
+                                if (realGaugeAngle < 0 || realGaugeAngle > 180) {
+                                    if (deltaX > 0) {
+                                        realGaugeAngle = 180;
+                                    } else {
+                                        realGaugeAngle = 0;
+                                    }
+                                }
+
+                                needle.style.transform = `rotate(${realGaugeAngle}deg)`;
+                                const calculatedScore = Math.round((realGaugeAngle / 180) * 100);
+                                updateGaugeDisplay(calculatedScore);
+                            });
+
+                            // Reset smoothly back to default score (72) when mouse leaves the figure
+                            gaugeRegion.addEventListener('mouseleave', () => {
+                                needle.style.transform = `rotate(129.6deg)`; // 72% of 180 degrees
+                                updateGaugeDisplay(72);
+                            });
+                        </script>
+                        <!-- endstress level -->
+                    </div>
+                    <div class="col-lg-6 content" data-aos="fade-up" data-aos-delay="100">
+                        <h3>About Us</h3>
+                        <p>
+                            Welcome to MindLytics, a smart stress detection and mental wellness platform designed to
+                            help individuals understand and manage their stress levels effectively.
+                            Our platform combines technology and mental wellness support to provide users with a simple
+                            and accessible way to assess their stress levels through an interactive stress analysis
+                            system.
+                            Based on user responses and analysis, the system identifies stress levels and provides
+                            personalized recommendations to support mental well-being.
+                            We believe that mental health support should be easy to access. Therefore, our platform not
+                            only helps users understand their stress but also connects them with professional
+                            psychologists when needed.
+                            Users can explore recommended specialists, book appointments, and receive guidance tailored
+                            to their needs.
+                            In addition to professional support, we provide stress-relief activities and wellness
+                            exercises such as relaxation techniques, mindfulness activities, and self-care
+                            recommendations to help users reduce stress and improve daily well-being.
+                            Note: Our system is intended for stress screening and wellness support purposes only and
+                            does not replace professional medical diagnosis or treatment.
+                        </p>
+                        <ul>
+                            <li>
+                                <i class="fa-solid fa-brain"></i>
+                                <div>
+                                    <h5>Stress Detection & Analysis</h5>
+                                    <p>Understand your stress level through a simple and interactive assessment based on
+                                        your responses.</p>
+                                </div>
+                            </li>
+
+                            <li>
+                                <i class="fa-solid fa-hand-holding-heart"></i>
+                                <div>
+                                    <h5>Psychologist Support</h5>
+                                    <p>Get connected with qualified psychologists and receive personalized mental health
+                                        guidance when needed.</p>
+                                </div>
+                            </li>
+
+                            <li>
+                                <i class="fa-solid fa-heart-pulse"></i>
+                                <div>
+                                    <h5>Stress Relief & Wellness</h5>
+                                    <p>Improve your mental well-being using mindfulness activities, relaxation
+                                        techniques, and self-care tools.</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section><!-- /About Section -->
+
+        <!-- Stats Section -->
+        <section id="stats" class="stats section light-background">
+
+            <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+                <div class="row gy-4">
+
+                    <!-- Expert Psychologists -->
+                    <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
+
+                        <i class="fas fa-user-md"></i>
+
+                        <div class="stats-item">
+                            <span data-purecounter-start="0" data-purecounter-end="25" data-purecounter-duration="1"
+                                class="purecounter"></span>
+
+                            <p>Expert Psychologists</p>
+                        </div>
+                    </div>
+                    <!-- End Stats Item -->
+
+
+                    <!-- Mental Health Services -->
+                    <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
+
+                        <i class="fas fa-brain"></i>
+
+                        <div class="stats-item">
+                            <span data-purecounter-start="0" data-purecounter-end="10" data-purecounter-duration="1"
+                                class="purecounter"></span>
+
+                            <p>Mental Health Services</p>
+                        </div>
+                    </div>
+                    <!-- End Stats Item -->
+
+
+                    <!-- Stress Assessments -->
+                    <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
+
+                        <i class="fas fa-chart-line"></i>
+
+                        <div class="stats-item">
+                            <span data-purecounter-start="0" data-purecounter-end="500" data-purecounter-duration="1"
+                                class="purecounter"></span>
+
+                            <p>Stress Assessments</p>
+                        </div>
+                    </div>
+                    <!-- End Stats Item -->
+
+
+                    <!-- Satisfied Users -->
+                    <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
+
+                        <i class="fas fa-smile"></i>
+
+                        <div class="stats-item">
+                            <span data-purecounter-start="0" data-purecounter-end="1000" data-purecounter-duration="1"
+                                class="purecounter"></span>
+
+                            <p>Satisfied Users</p>
+                        </div>
+                    </div>
+                    <!-- End Stats Item -->
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="services section">
+
+            <!-- Section Title -->
+            <div class="container section-title" data-aos="fade-up">
+                <h2>Services</h2>
+
+                <p>
+                    We offer a range of mental wellness services including stress level assessment, personalized
+                    recommendations, access to qualified psychologists, and self-care tools. <br>
+                    Our goal is to make mental health support simple, accessible, and effective for everyone.
+                </p>
+                </p>
+            </div><!-- End Section Title -->
+
+            <div class="container">
+
+                <div class="row gy-4">
+
+                    <!-- Service 1 -->
+                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                        <div class="service-item position-relative">
+                            <div class="icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <a href="#" class="stretched-link">
+                                <h3>Stress Assessment</h3>
+                            </a>
+                            <p>
+                                Take a simple interactive test to understand your current stress level based on your
+                                emotional and lifestyle responses.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Service 2 -->
+                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                        <div class="service-item position-relative">
+                            <div class="icon">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <a href="#" class="stretched-link">
+                                <h3>Psychologist Consultation</h3>
+                            </a>
+                            <p>
+                                Connect with certified psychologists for personalized online sessions and mental health
+                                guidance.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Service 3 -->
+                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                        <div class="service-item position-relative">
+                            <div class="icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <a href="#" class="stretched-link">
+                                <h3>Easy Appointment Booking</h3>
+                            </a>
+                            <p>
+                                Book your consultation easily through our platform with flexible time slots and instant
+                                confirmation.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Service 4 -->
+                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                        <div class="service-item position-relative">
+                            <div class="icon">
+                                <i class="fas fa-heart-pulse"></i>
+                            </div>
+                            <a href="#" class="stretched-link">
+                                <h3>Wellness & Relaxation</h3>
+                            </a>
+                            <p>
+                                Access mindfulness exercises, breathing techniques, and stress relief activities to
+                                improve emotional balance.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Service 5 -->
+                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+                        <div class="service-item position-relative">
+                            <div class="icon">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <a href="#" class="stretched-link">
+                                <h3>Secure & Private Platform</h3>
+                            </a>
+                            <p>
+                                Your data and sessions are fully secure and confidential, ensuring complete privacy and
+                                trust.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Service 6-->
+                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="600">
+                        <div class="service-item position-relative">
+                            <div class="icon">
+                                <i class="fas fa-notes-medical"></i>
+                            </div>
+                            <a href="#" class="stretched-link">
+                                <h3>Personalized Recommendations</h3>
+                            </a>
+                            <p>
+                                Receive tailored suggestions based on your stress level, including coping techniques,
+                                mindfulness activities, and professional support options.
+                            </p>
+                        </div>
+                    </div>
+
+
+        </section><!-- /Services Section -->
+
+        <!-- Appointment Section -->
+        <section id="appointment" class="appointment section">
+
+            <!-- Section Title -->
+            <div class="container section-title" data-aos="fade-up">
+                <h2>Appointment</h2>
+                <p>
+                    Book an online consultation with qualified psychologists to receive personalized mental health
+                    support based on your stress assessment results.
+                </p>
+                </p>
+            </div><!-- End Section Title -->
+
+            <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+                <form action="forms/appointment.php" method="post" role="form" class="php-email-form">
+                    <div class="row">
+                        <div class="col-md-4 form-group">
+                            <input type="text" name="name" class="form-control" id="name" placeholder="Your Name"
+                                required="">
+                        </div>
+                        <div class="col-md-4 form-group mt-3 mt-md-0">
+                            <input type="email" class="form-control" name="email" id="email" placeholder="Your Email"
+                                required="">
+                        </div>
+                        <div class="col-md-4 form-group mt-3 mt-md-0">
+                            <input type="tel" class="form-control" name="phone" id="phone" placeholder="Your Phone"
+                                required="">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 form-group mt-3">
+                            <input type="datetime-local" name="date" class="form-control datepicker" id="date"
+                                placeholder="Appointment Date" required="">
+                        </div>
+                        <div class="col-md-4 form-group mt-3">
+                            <select name="department" id="department" class="form-select" required="">
+                                <option value="">Select Department</option>
+                                <option value="Department 1">Department 1</option>
+                                <option value="Department 2">Department 2</option>
+                                <option value="Department 3">Department 3</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 form-group mt-3">
+                            <select name="doctor" id="doctor" class="form-select" required="">
+                                <option value="">Select Doctor</option>
+                                <option value="Doctor 1">Doctor 1</option>
+                                <option value="Doctor 2">Doctor 2</option>
+                                <option value="Doctor 3">Doctor 3</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-3">
+                        <textarea class="form-control" name="message" rows="5"
+                            placeholder="Message (Optional)"></textarea>
+                    </div>
+                    <div class="mt-3">
+                        <div class="loading">Loading</div>
+                        <div class="error-message"></div>
+                        <div class="sent-message">Your appointment request has been sent successfully. Thank you!</div>
+                        <div class="text-center"><button type="submit">Make an Appointment</button></div>
+                    </div>
+                </form>
+
+            </div>
+
+        </section><!-- /Appointment Section -->
+
+        <!-- Departments Section -->
+        <section id="departments" class="departments section">
+
+            <div class="container section-title text-center" data-aos="fade-up">
+                <h2>Psychology Department</h2>
+
+                <!-- Centered Image -->
+                <div class="d-flex justify-content-center my-4">
+                    <img src="{% static 'Main/assets/img/psychology.jpeg' %}" alt="Psychology Department"
+                        class="img-fluid rounded" style="max-width:300px;">
+                </div>
+
+                <!-- Centered Paragraph -->
+                <p class="fst-italic mx-auto" style="max-width:700px;">
+                    Professional psychological care to support emotional well-being,
+                    mental health, stress management, and personal growth.
+
+                    Our Psychology Department provides counseling, therapy,
+                    mental health assessments, and support for anxiety,
+                    depression, stress, behavioral concerns, and emotional challenges.
+                    We aim to create a safe and supportive environment where
+                    individuals can improve mental wellness and quality of life.
+                </p>
+
+            </div>
+
+
+        </section>
+        </p>
+        </div><!-- End Section Title -->
+
+        <!-- Doctors Section -->
+        <section id="doctors" class="doctors section">
+
+            <!-- Section Title -->
+            <div class="container section-title" data-aos="fade-up">
+                <h2>Psychologists</h2>
+                <p>Meet our experienced mental health professionals who offer expert guidance, counseling, and support
+                    tailored to individual stress and wellness needs.</p>
+            </div><!-- End Section Title -->
+
+            <div class="container">
+
+                <div class="row gy-4">
+
+                    <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+                        <div class="team-member d-flex align-items-start">
+                            <div class="pic"><img src="{% static 'Main/assets/img/doctors/doctors-1.jpg' %}"
+                                    class="img-fluid" alt=""></div>
+                            <div class="member-info">
+                                <h4>Walter White</h4>
+                                <span>Chief Medical Officer</span>
+                                <p>Explicabo voluptatem mollitia et repellat qui dolorum quasi</p>
+                                <div class="social">
+                                    <a href=""><i class="bi bi-twitter-x"></i></a>
+                                    <a href=""><i class="bi bi-facebook"></i></a>
+                                    <a href=""><i class="bi bi-instagram"></i></a>
+                                    <a href=""> <i class="bi bi-linkedin"></i> </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- End Team Member -->
+
+                    <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
+                        <div class="team-member d-flex align-items-start">
+                            <div class="pic"><img src="{% static 'Main/assets/img/doctors/doctors-2.jpg' %}"
+                                    class="img-fluid" alt=""></div>
+                            <div class="member-info">
+                                <h4>Sarah Jhonson</h4>
+                                <span>Anesthesiologist</span>
+                                <p>Aut maiores voluptates amet et quis praesentium qui senda para</p>
+                                <div class="social">
+                                    <a href=""><i class="bi bi-twitter-x"></i></a>
+                                    <a href=""><i class="bi bi-facebook"></i></a>
+                                    <a href=""><i class="bi bi-instagram"></i></a>
+                                    <a href=""> <i class="bi bi-linkedin"></i> </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- End Team Member -->
+
+                    <div class="col-lg-6" data-aos="fade-up" data-aos-delay="300">
+                        <div class="team-member d-flex align-items-start">
+                            <div class="pic"><img src="{% static 'Main/assets/img/doctors/doctors-3.jpg' %}"
+                                    class="img-fluid" alt=""></div>
+                            <div class="member-info">
+                                <h4>William Anderson</h4>
+                                <span>Cardiology</span>
+                                <p>Quisquam facilis cum velit laborum corrupti fuga rerum quia</p>
+                                <div class="social">
+                                    <a href=""><i class="bi bi-twitter-x"></i></a>
+                                    <a href=""><i class="bi bi-facebook"></i></a>
+                                    <a href=""><i class="bi bi-instagram"></i></a>
+                                    <a href=""> <i class="bi bi-linkedin"></i> </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- End Team Member -->
+
+                    <div class="col-lg-6" data-aos="fade-up" data-aos-delay="400">
+                        <div class="team-member d-flex align-items-start">
+                            <div class="pic"><img src="{% static 'Main/assets/img/doctors/doctors-4.jpg' %}"
+                                    class="img-fluid" alt=""></div>
+                            <div class="member-info">
+                                <h4>Amanda Jepson</h4>
+                                <span>Neurosurgeon</span>
+                                <p>Dolorum tempora officiis odit laborum officiis et et accusamus</p>
+                                <div class="social">
+                                    <a href=""><i class="bi bi-twitter-x"></i></a>
+                                    <a href=""><i class="bi bi-facebook"></i></a>
+                                    <a href=""><i class="bi bi-instagram"></i></a>
+                                    <a href=""> <i class="bi bi-linkedin"></i> </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- End Team Member -->
+
+                </div>
+
+            </div>
+
+        </section><!-- /Doctors Section -->
+
+        <!-- Faq Section -->
+        <section id="faq" class="faq section light-background">
+
+            <!-- Section Title -->
+            <div class="container section-title" data-aos="fade-up">
+                <h2>Frequently Asked Questions</h2>
+                <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
+            </div><!-- End Section Title -->
+
+            <div class="container">
+
+                <div class="row justify-content-center">
+
+                    <div class="col-lg-10" data-aos="fade-up" data-aos-delay="100">
+
+                        <div class="faq-container">
+
+                            <div class="faq-item faq-active">
+                                <h3>Non consectetur a erat nam at lectus urna duis?</h3>
+                                <div class="faq-content">
+                                    <p>Feugiat pretium nibh ipsum consequat. Tempus iaculis urna id volutpat lacus
+                                        laoreet non curabitur gravida. Venenatis lectus magna fringilla urna porttitor
+                                        rhoncus dolor purus non.</p>
+                                </div>
+                                <i class="faq-toggle bi bi-chevron-right"></i>
+                            </div><!-- End Faq item-->
+
+                            <div class="faq-item">
+                                <h3>Feugiat scelerisque varius morbi enim nunc faucibus?</h3>
+                                <div class="faq-content">
+                                    <p>Dolor sit amet consectetur adipiscing elit pellentesque habitant morbi. Id
+                                        interdum velit laoreet id donec ultrices. Fringilla phasellus faucibus
+                                        scelerisque eleifend donec pretium. Est pellentesque elit ullamcorper dignissim.
+                                        Mauris ultrices eros in cursus turpis massa tincidunt dui.</p>
+                                </div>
+                                <i class="faq-toggle bi bi-chevron-right"></i>
+                            </div><!-- End Faq item-->
+
+                            <div class="faq-item">
+                                <h3>Dolor sit amet consectetur adipiscing elit pellentesque?</h3>
+                                <div class="faq-content">
+                                    <p>Eleifend mi in nulla posuere sollicitudin aliquam ultrices sagittis orci.
+                                        Faucibus pulvinar elementum integer enim. Sem nulla pharetra diam sit amet nisl
+                                        suscipit. Rutrum tellus pellentesque eu tincidunt. Lectus urna duis convallis
+                                        convallis tellus. Urna molestie at elementum eu facilisis sed odio morbi quis
+                                    </p>
+                                </div>
+                                <i class="faq-toggle bi bi-chevron-right"></i>
+                            </div><!-- End Faq item-->
+
+                            <div class="faq-item">
+                                <h3>Ac odio tempor orci dapibus. Aliquam eleifend mi in nulla?</h3>
+                                <div class="faq-content">
+                                    <p>Dolor sit amet consectetur adipiscing elit pellentesque habitant morbi. Id
+                                        interdum velit laoreet id donec ultrices. Fringilla phasellus faucibus
+                                        scelerisque eleifend donec pretium. Est pellentesque elit ullamcorper dignissim.
+                                        Mauris ultrices eros in cursus turpis massa tincidunt dui.</p>
+                                </div>
+                                <i class="faq-toggle bi bi-chevron-right"></i>
+                            </div><!-- End Faq item-->
+
+                            <div class="faq-item">
+                                <h3>Tempus quam pellentesque nec nam aliquam sem et tortor?</h3>
+                                <div class="faq-content">
+                                    <p>Molestie a iaculis at erat pellentesque adipiscing commodo. Dignissim suspendisse
+                                        in est ante in. Nunc vel risus commodo viverra maecenas accumsan. Sit amet nisl
+                                        suscipit adipiscing bibendum est. Purus gravida quis blandit turpis cursus in
+                                    </p>
+                                </div>
+                                <i class="faq-toggle bi bi-chevron-right"></i>
+                            </div><!-- End Faq item-->
+
+                            <div class="faq-item">
+                                <h3>Perspiciatis quod quo quos nulla quo illum ullam?</h3>
+                                <div class="faq-content">
+                                    <p>Enim ea facilis quaerat voluptas quidem et dolorem. Quis et consequatur non sed
+                                        in suscipit sequi. Distinctio ipsam dolore et.</p>
+                                </div>
+                                <i class="faq-toggle bi bi-chevron-right"></i>
+                            </div><!-- End Faq item-->
+
+                        </div>
+
+                    </div><!-- End Faq Column-->
+
+                </div>
+
+            </div>
+
+        </section><!-- /Faq Section -->
+
+        <!-- Testimonials Section -->
+        <section id="testimonials" class="testimonials section">
+
+            <div class="container">
+
+                <div class="row align-items-center">
+
+                    <div class="col-lg-5 info" data-aos="fade-up" data-aos-delay="100">
+                        <h3>Testimonials</h3>
+                        <p>
+                            Our platform has helped individuals take meaningful steps toward better mental wellness
+                            through stress analysis, personalized recommendations, and psychologist support.
+                        </p>
+                    </div>
+
+                    <div class="col-lg-7" data-aos="fade-up" data-aos-delay="200">
+
+                        <div class="swiper init-swiper">
+                            <script type="application/json" class="swiper-config">
+                {
+                  "loop": true,
+                  "speed": 600,
+                  "autoplay": {
+                    "delay": 5000
+                  },
+                  "slidesPerView": "auto",
+                  "pagination": {
+                    "el": ".swiper-pagination",
+                    "type": "bullets",
+                    "clickable": true
+                  }
+                }
+              </script>
+                            <div class="swiper-wrapper">
+
+                                <div class="swiper-slide">
+                                    <div class="testimonial-item">
+                                        <div class="d-flex">
+                                            <img src="{% static 'Main/assets/img/testimonials/testimonials-1.jpg' %}"
+                                                class="testimonial-img flex-shrink-0" alt="">
+                                            <div>
+                                                <h3>Saul Goodman</h3>
+                                                <h4>Ceo &amp; Founder</h4>
+                                                <div class="stars">
+                                                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                                                        class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                                                        class="bi bi-star-fill"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p>
+                                            <i class="bi bi-quote quote-icon-left"></i>
+                                            <span>Proin iaculis purus consequat sem cure digni ssim donec porttitora
+                                                entum suscipit rhoncus. Accusantium quam, ultricies eget id, aliquam
+                                                eget nibh et. Maecen aliquam, risus at semper.</span>
+                                            <i class="bi bi-quote quote-icon-right"></i>
+                                        </p>
+                                    </div>
+                                </div><!-- End testimonial item -->
+
+                                <div class="swiper-slide">
+                                    <div class="testimonial-item">
+                                        <div class="d-flex">
+                                            <img src="{% static 'Main/assets/img/testimonials/testimonials-2.jpg'%}"
+                                                class="testimonial-img flex-shrink-0" alt="">
+                                            <div>
+                                                <h3>Sara Wilsson</h3>
+                                                <h4>Designer</h4>
+                                                <div class="stars">
+                                                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                                                        class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                                                        class="bi bi-star-fill"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p>
+                                            <i class="bi bi-quote quote-icon-left"></i>
+                                            <span>Export tempor illum tamen malis malis eram quae irure esse labore quem
+                                                cillum quid cillum eram malis quorum velit fore eram velit sunt aliqua
+                                                noster fugiat irure amet legam anim culpa.</span>
+                                            <i class="bi bi-quote quote-icon-right"></i>
+                                        </p>
+                                    </div>
+                                </div><!-- End testimonial item -->
+
+                                <div class="swiper-slide">
+                                    <div class="testimonial-item">
+                                        <div class="d-flex">
+                                            <img src="{% static 'Main/assets/img/testimonials/testimonials-3.jpg' %}"
+                                                class="testimonial-img flex-shrink-0" alt="">
+                                            <div>
+                                                <h3>Jena Karlis</h3>
+                                                <h4>Store Owner</h4>
+                                                <div class="stars">
+                                                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                                                        class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                                                        class="bi bi-star-fill"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p>
+                                            <i class="bi bi-quote quote-icon-left"></i>
+                                            <span>Enim nisi quem export duis labore cillum quae magna enim sint quorum
+                                                nulla quem veniam duis minim tempor labore quem eram duis noster aute
+                                                amet eram fore quis sint minim.</span>
+                                            <i class="bi bi-quote quote-icon-right"></i>
+                                        </p>
+                                    </div>
+                                </div><!-- End testimonial item -->
+
+                                <div class="swiper-slide">
+                                    <div class="testimonial-item">
+                                        <div class="d-flex">
+                                            <img src="{% static 'Main/assets/img/testimonials/testimonials-4.jpg' %}"
+                                                class="testimonial-img flex-shrink-0" alt="">
+                                            <div>
+                                                <h3>Matt Brandon</h3>
+                                                <h4>Freelancer</h4>
+                                                <div class="stars">
+                                                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                                                        class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                                                        class="bi bi-star-fill"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p>
+                                            <i class="bi bi-quote quote-icon-left"></i>
+                                            <span>Fugiat enim eram quae cillum dolore dolor amet nulla culpa multos
+                                                export minim fugiat minim velit minim dolor enim duis veniam ipsum anim
+                                                magna sunt elit fore quem dolore labore illum veniam.</span>
+                                            <i class="bi bi-quote quote-icon-right"></i>
+                                        </p>
+                                    </div>
+                                </div><!-- End testimonial item -->
+
+                                <div class="swiper-slide">
+                                    <div class="testimonial-item">
+                                        <div class="d-flex">
+                                            <img src="{% static 'Main/assets/img/testimonials/testimonials-5.jpg' %}"
+                                                class="testimonial-img flex-shrink-0" alt="">
+                                            <div>
+                                                <h3>John Larson</h3>
+                                                <h4>Entrepreneur</h4>
+                                                <div class="stars">
+                                                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                                                        class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                                                        class="bi bi-star-fill"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p>
+                                            <i class="bi bi-quote quote-icon-left"></i>
+                                            <span>Quis quorum aliqua sint quem legam fore sunt eram irure aliqua veniam
+                                                tempor noster veniam enim culpa labore duis sunt culpa nulla illum
+                                                cillum fugiat legam esse veniam culpa fore nisi cillum quid.</span>
+                                            <i class="bi bi-quote quote-icon-right"></i>
+                                        </p>
+                                    </div>
+                                </div><!-- End testimonial item -->
+
+                            </div>
+                            <div class="swiper-pagination"></div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section><!-- /Testimonials Section -->
+
+        <!-- Contact Section -->
+     <!-- Section Title -->
+<div class="container section-title" data-aos="fade-up">
+    <h2>Contact Us</h2>
+    <p>Reach out for appointments, counseling support, or general inquiries.</p>
+</div>
+
+<div class="container" data-aos="fade-up">
+    <div class="row gy-4">
+
+        <!-- Contact Info -->
+        <div class="col-lg-4">
+
+            <div class="info-item d-flex mb-4">
+                <i class="bi bi-telephone flex-shrink-0"></i>
+                <div>
+                    <h3>Call Us</h3>
+                    <p>+91 9087654323</p>
+                </div>
+            </div>
+
+            <div class="info-item d-flex">
+                <i class="bi bi-envelope flex-shrink-0"></i>
+                <div>
+                    <h3>Email</h3>
+                    <p>mindlytics1006@gmail.com</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Contact Form -->
+        <div class="col-lg-8">
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="row gy-4">
+
+                    <div class="col-md-6">
+                        <input
+                            type="text"
+                            class="form-control"
+                            name="name"
+                            placeholder="Your Name"
+                            required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <input
+                            type="email"
+                            class="form-control"
+                            name="email"
+                            placeholder="Your Email"
+                            required>
+                    </div>
+
+
+
+                    <div class="col-md-12 text-center">
+                        <button type="submit" class="btn btn-primary">
+                         Send Message
+                    
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+</div>
+
+</section>
+<!-- /Contact Section -->
+
+    </main>
+
+    <footer id="footer" class="footer light-background">
+
+        <div class="container footer-top">
+            <div class="row gy-4">
+                <div class="col-lg-4 col-md-6 footer-about">
+                    <a href="index.html" class="logo d-flex align-items-center">
+                        <span class="sitename">Mindlytics</span>
+                    </a>
+                    <div class="footer-contact pt-3">
+                        <p>A108 Adam Street</p>
+                        <p>New York, NY 535022</p>
+                        <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
+                        <p><strong>Email:</strong> <span>info@example.com</span></p>
+                    </div>
+                    <div class="social-links d-flex mt-4">
+                        <a href=""><i class="bi bi-twitter-x"></i></a>
+                        <a href=""><i class="bi bi-facebook"></i></a>
+                        <a href=""><i class="bi bi-instagram"></i></a>
+                        <a href=""><i class="bi bi-linkedin"></i></a>
+                    </div>
+                </div>
+
+                <div class="col-lg-2 col-md-3 footer-links">
+                    <h4>Useful Links</h4>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">About us</a></li>
+                        <li><a href="#">Services</a></li>
+                        <li><a href="#">Terms of service</a></li>
+                        <li><a href="#">Privacy policy</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-2 col-md-3 footer-links">
+                    <h4>Our Services</h4>
+                    <ul>
+                        <li><a href="#">Web Design</a></li>
+                        <li><a href="#">Web Development</a></li>
+                        <li><a href="#">Product Management</a></li>
+                        <li><a href="#">Marketing</a></li>
+                        <li><a href="#">Graphic Design</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-2 col-md-3 footer-links">
+                    <h4>Hic solutasetp</h4>
+                    <ul>
+                        <li><a href="#">Molestiae accusamus iure</a></li>
+                        <li><a href="#">Excepturi dignissimos</a></li>
+                        <li><a href="#">Suscipit distinctio</a></li>
+                        <li><a href="#">Dilecta</a></li>
+                        <li><a href="#">Sit quas consectetur</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-2 col-md-3 footer-links">
+                    <h4>Nobis illum</h4>
+                    <ul>
+                        <li><a href="#">Ipsam</a></li>
+                        <li><a href="#">Laudantium dolorum</a></li>
+                        <li><a href="#">Dinera</a></li>
+                        <li><a href="#">Trodelas</a></li>
+                        <li><a href="#">Flexo</a></li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="container copyright text-center mt-4">
+            <p>© <span>Copyright</span> <strong class="px-1 sitename">MINDLYTICS</strong> <span>All Rights Reserved</span>
+            </p>
+            <div class="credits">
+                <!-- All the links in the footer should remain intact. -->
+                <!-- You can delete the links only if you've purchased the pro version. -->
+                <!-- Licensing information: https://bootstrapmade.com/license/ -->
+                <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
+                Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a> Distributed by <a
+                    href=“https://themewagon.com>ThemeWagon
+            </div>
+        </div>
+
+    </footer>
+
+    <!-- Scroll Top -->
+    <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
+            class="bi bi-arrow-up-short"></i></a>
+
+    <!-- Preloader -->
+    <div id="preloader"></div>
+
+    <!-- Vendor JS Files -->
+    <script src="{% static 'Main/assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'Main/assets/vendor/php-email-form/validate.js' %}"></script>
+    <script src="{% static 'Main/assets/vendor/aos/aos.js' %}"></script>
+    <script src="{% static 'Main/assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
+    <script src="{% static 'Main/assets/vendor/purecounter/purecounter_vanilla.js' %}"></script>
+    <script src="{% static 'Main/assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
+
+    <!-- Main JS File -->
+    <script src="{% static 'Main/assets/js/main.js' %}"></script>
+
+</body>
+
+</html>

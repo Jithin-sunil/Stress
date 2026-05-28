@@ -1,0 +1,133 @@
+{% extends 'Psychologist/Head.html' %}
+{% block content %}
+
+<style>
+
+body{
+    background:#edf1f5;
+    font-family:Arial,sans-serif;
+    padding:40px 0;
+}
+
+.profile-card{
+    max-width:700px;
+    margin:auto;
+    background:white;
+    padding:35px;
+    border-radius:25px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.08);
+}
+
+.page-title{
+    text-align:center;
+    color:#1e66f5;
+    font-size:35px;
+    margin-bottom:25px;
+}
+
+.profile-img{
+    display:block;
+    margin:auto;
+    width:140px;
+    height:140px;
+    border-radius:50%;
+    object-fit:cover;
+    border:5px solid #edf1f5;
+    margin-bottom:25px;
+}
+
+.profile-table{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0 15px;
+}
+
+.profile-table td:first-child{
+    width:180px;
+    font-weight:bold;
+    color:#333;
+}
+
+.profile-table td:last-child{
+    background:#f5f7fb;
+    padding:12px;
+    border-radius:10px;
+}
+
+.edit-btn{
+    display:inline-block;
+    background:#1e66f5;
+    color:white;
+    text-decoration:none;
+    padding:12px 25px;
+    border-radius:10px;
+    margin-top:20px;
+}
+
+.edit-btn:hover{
+    background:#1456d9;
+}
+
+.btn-area{
+    text-align:center;
+}
+
+</style>
+
+<div class="profile-card">
+
+<h1 class="page-title">My Profile</h1>
+
+<img src="{{psychologistdata.psychologist_photo.url}}"
+class="profile-img">
+
+<table class="profile-table">
+
+<tr>
+<td>Name</td>
+<td>{{psychologistdata.psychologist_name}}</td>
+</tr>
+
+<tr>
+<td>Email</td>
+<td>{{psychologistdata.psychologist_email}}</td>
+</tr>
+
+<tr>
+<td>Contact</td>
+<td>{{psychologistdata.psychologist_contact}}</td>
+</tr>
+
+<tr>
+<td>Address</td>
+<td>{{psychologistdata.psychologist_address}}</td>
+</tr>
+
+<tr>
+<td>District</td>
+<td>{{psychologistdata.psychologist_place.district.district_name}}</td>
+</tr>
+
+<tr>
+<td>Place</td>
+<td>{{psychologistdata.psychologist_place.place_name}}</td>
+</tr>
+
+</table>
+
+<div class="btn-area">
+
+<a href="{% url 'Psychologist:EditProfile' %}"
+class="edit-btn">
+Edit Profile
+</a>
+<a href="{% url 'Psychologist:ChangePassword' %}"
+class="edit-btn">
+Change Password
+</a>
+
+</div>
+
+</div>
+
+{% endblock content %}

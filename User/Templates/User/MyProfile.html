@@ -1,0 +1,217 @@
+{% extends 'User/Head.html' %}
+{% block content %}
+
+<style>
+
+body{
+    background:#f2f4f7;
+    font-family:Arial,sans-serif;
+    padding:40px 0;
+}
+
+.profile-card{
+
+max-width:750px;
+
+margin:auto;
+
+background:white;
+
+padding:40px;
+
+border-radius:20px;
+
+box-shadow:
+0 4px 20px rgba(0,0,0,.06);
+
+text-align:center;
+}
+
+.page-title{
+
+color:#435ebe;
+
+font-size:32px;
+
+font-weight:600;
+
+margin-bottom:30px;
+}
+
+
+.profile-img{
+
+width:160px;
+
+height:160px;
+
+object-fit:cover;
+
+border-radius:50%;
+
+border:5px solid #e7ecff;
+
+margin-bottom:25px;
+}
+
+
+.profile-table{
+
+width:100%;
+
+border-collapse:collapse;
+
+margin-top:20px;
+}
+
+.profile-table td{
+
+padding:16px;
+
+border-bottom:1px solid #edf2f7;
+}
+
+.profile-table td:first-child{
+
+font-weight:600;
+
+width:180px;
+
+color:#25396f;
+
+background:#fafbff;
+}
+
+
+.edit-btn{
+
+display:inline-block;
+
+margin-top:25px;
+
+background:#435ebe;
+
+color:white;
+
+padding:12px 24px;
+
+border-radius:8px;
+
+text-decoration:none;
+
+font-weight:600;
+}
+
+.edit-btn:hover{
+
+background:#364b98;
+}
+
+</style>
+
+
+
+<form action="" method="post">
+
+<div class="profile-card">
+
+<h1 class="page-title">
+
+My Profile
+
+</h1>
+
+
+<img src="{{userdata.user_photo.url}}"
+
+class="profile-img">
+
+
+
+<table class="profile-table">
+
+<tr>
+
+<td>Name</td>
+
+<td>{{userdata.user_name}}</td>
+
+</tr>
+
+
+<tr>
+
+<td>Email</td>
+
+<td>{{userdata.user_email}}</td>
+
+</tr>
+
+
+<tr>
+
+<td>Contact</td>
+
+<td>{{userdata.user_contact}}</td>
+
+</tr>
+
+
+<tr>
+
+<td>Address</td>
+
+<td>{{userdata.user_address}}</td>
+
+</tr>
+
+
+<tr>
+
+<td>District</td>
+
+<td>
+
+{{userdata.user_place.district.district_name}}
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>Place</td>
+
+<td>
+
+{{userdata.user_place.place_name}}
+
+</td>
+
+</tr>
+
+</table>
+
+
+
+<a href="{% url 'User:EditProfile' %}"
+
+class="edit-btn">
+
+Edit Profile
+
+</a>
+<a href="{% url 'User:ChangePassword' %}"
+
+class="edit-btn">
+
+Change Password
+
+</a>
+
+</div>
+
+</form>
+
+{% endblock content %}

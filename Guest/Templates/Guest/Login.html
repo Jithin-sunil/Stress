@@ -1,0 +1,170 @@
+{% extends 'Guest/Head.html' %}
+{% block content %}
+
+<style>
+    body{
+        background:#f4f8fb;
+    }
+
+    .login-section{
+        min-height:80vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+    }
+
+    .login-card{
+        background:#fff;
+        width:420px;
+        padding:40px;
+        border-radius:20px;
+        box-shadow:0px 10px 30px rgba(0,0,0,0.08);
+    }
+
+    .login-title{
+        text-align:center;
+        font-size:32px;
+        font-weight:700;
+        color:#0d6efd;
+        margin-bottom:10px;
+    }
+
+    .login-subtitle{
+        text-align:center;
+        color:gray;
+        margin-bottom:30px;
+    }
+
+    .form-group{
+        margin-bottom:20px;
+    }
+
+    label{
+        font-weight:600;
+        display:block;
+        margin-bottom:8px;
+        color:#333;
+    }
+
+    input{
+        width:100%;
+        padding:12px;
+        border:1px solid #ddd;
+        border-radius:10px;
+        outline:none;
+        font-size:15px;
+        transition:.3s;
+    }
+
+    input:focus{
+        border-color:#0d6efd;
+        box-shadow:0 0 8px rgba(13,110,253,.2);
+    }
+
+    .login-btn{
+        width:100%;
+        background:#0d6efd;
+        color:white;
+        border:none;
+        padding:12px;
+        border-radius:10px;
+        font-size:16px;
+        font-weight:600;
+        cursor:pointer;
+        transition:.3s;
+    }
+
+    .login-btn:hover{
+        background:#0b5ed7;
+    }
+
+    .register-link{
+        text-align:center;
+        margin-top:20px;
+    }
+
+    .register-link a{
+        text-decoration:none;
+        color:#0d6efd;
+        font-weight:600;
+    }
+
+    .register-link a:hover{
+        text-decoration:underline;
+    }
+</style>
+
+
+<div class="login-section">
+
+    <div class="login-card">
+
+        <h2 class="login-title">Login</h2>
+
+        <p class="login-subtitle">
+            Welcome back to Mindlytics
+        </p>
+
+        <form action="" method="post">
+
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email"
+                       name="email"
+                       placeholder="Enter your email"
+                       required>
+            </div>
+
+
+            <div class="form-group">
+                <label>Password</label>
+
+                <input type="password"
+                       name="password"
+
+                       pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+
+                       title="Must contain uppercase, lowercase, number and 8+ characters"
+
+                       placeholder="Enter password"
+                       required>
+            </div>
+
+
+            <button class="login-btn" type="submit">
+                Login
+            </button>
+
+
+            <div class="register-link">
+
+                Don't have an account?
+
+                <a href="{% url 'Guest:NewUser' %}">
+                    Register Here
+                </a>
+                <br>
+
+                <a href="{% url 'Guest:forgotpassword' %}">
+                    Forgot Password?
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+{% if msg %}
+<script>
+alert("{{msg}}");
+window.location="{% url 'Guest:Login' %}";
+</script>
+{% endif %}
+
+{% endblock content %}

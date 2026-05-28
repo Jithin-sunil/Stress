@@ -1,0 +1,218 @@
+{% extends 'Administrator/Head.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+
+body{
+    background:#ece9fb;
+    font-family:Arial,sans-serif;
+    padding:40px 0;
+}
+
+/* Form Card */
+
+.form-card{
+    max-width:700px;
+    margin:auto;
+    background:white;
+    padding:35px;
+    border-radius:20px;
+    border-top:6px solid #6f42c1;
+    margin-bottom:50px;
+}
+
+.page-title{
+    text-align:center;
+    color:#6f42c1;
+    margin-bottom:25px;
+}
+
+.form-table{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0 18px;
+}
+
+.form-table td:first-child{
+    width:180px;
+    font-weight:bold;
+    color:#555;
+}
+
+.form-table input[type="text"]{
+    width:100%;
+    padding:14px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    outline:none;
+    font-size:15px;
+}
+
+.form-table input:focus{
+    border-color:#6f42c1;
+}
+
+.submit-btn{
+    background:#6f42c1;
+    color:white;
+    border:none;
+    padding:12px 25px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.cancel-btn{
+    background:#e4e4e4;
+    border:none;
+    padding:12px 25px;
+    border-radius:8px;
+    cursor:pointer;
+    margin-left:10px;
+}
+
+/* Table Card */
+
+.table-card{
+    max-width:900px;
+    margin:auto;
+    background:white;
+    padding:30px;
+    border-radius:20px;
+}
+
+.district-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.district-table th{
+    background:#6f42c1;
+    color:white;
+    padding:18px;
+    text-align:left;
+}
+
+.district-table td{
+    padding:20px;
+    border-bottom:1px solid #e5e5e5;
+}
+
+.delete-btn{
+    background:#ff4d4d;
+    color:white;
+    text-decoration:none;
+    padding:8px 14px;
+    border-radius:6px;
+}
+
+.edit-btn{
+    background:#4a90e2;
+    color:white;
+    text-decoration:none;
+    padding:8px 14px;
+    border-radius:6px;
+    margin-left:5px;
+}
+
+</style>
+
+
+<div class="form-card">
+
+<h1 class="page-title">DISTRICT</h1>
+
+<form action="" method="post">
+
+{% csrf_token %}
+
+<table class="form-table">
+
+<tr>
+
+<td>District Name</td>
+
+<td>
+<input type="text"
+name="txt_district"
+value="{{editdata.district_name}}"
+required
+placeholder="Enter District Name">
+</td>
+
+</tr>
+
+<tr>
+
+<td colspan="2" align="center">
+
+<input type="submit"
+value="Submit"
+class="submit-btn">
+
+<input type="reset"
+value="Cancel"
+class="cancel-btn">
+
+</td>
+
+</tr>
+
+</table>
+
+</form>
+
+</div>
+
+
+
+<div class="table-card">
+
+<table class="district-table">
+
+<tr>
+
+<th>SNo</th>
+<th>District</th>
+<th>Action</th>
+
+</tr>
+
+{% for i in districtdata %}
+
+<tr>
+
+<td>{{forloop.counter}}</td>
+
+<td>{{i.district_name}}</td>
+
+<td>
+
+<a href="{% url 'Administrator:deldistrict' i.id %}"
+class="delete-btn">
+Delete
+</a>
+
+<a href="{% url 'Administrator:editdistrict' i.id %}"
+class="edit-btn">
+Edit
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+{% if msg %}
+<script>
+alert("{{msg}}")
+window.location="{% url 'Administrator:District' %}"
+</script>
+{% endif %}
+
+{% endblock content %}

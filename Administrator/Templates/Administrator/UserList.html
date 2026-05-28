@@ -1,0 +1,157 @@
+{% extends 'Administrator/Head.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+
+body{
+    background:#ece9fb;
+    font-family:Arial,sans-serif;
+    padding:40px 0;
+}
+
+.page-title{
+    text-align:center;
+    color:#6f42c1;
+    margin-bottom:30px;
+}
+
+.table-card{
+    max-width:1400px;
+    margin:auto;
+    background:white;
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 6px 15px rgba(0,0,0,.08);
+
+    overflow-x:auto;
+}
+
+.user-table{
+    width:100%;
+    min-width:1300px;
+    border-collapse:collapse;
+    table-layout:fixed;
+}
+
+.user-table th{
+    background:#6f42c1;
+    color:white;
+    padding:16px;
+    text-align:center;
+    white-space:nowrap;
+}
+
+.user-table td{
+    padding:16px;
+    text-align:center;
+    border-bottom:1px solid #e5e5e5;
+
+    word-wrap:break-word;
+    overflow-wrap:break-word;
+}
+
+.user-table tr:nth-child(even){
+    background:#faf8ff;
+}
+
+.profile-img{
+    width:70px;
+    height:70px;
+    object-fit:cover;
+    border-radius:12px;
+    border:2px solid #e6ddff;
+}
+
+.gender-badge{
+    background:#4a90e2;
+    color:white;
+    padding:7px 12px;
+    border-radius:20px;
+    font-size:13px;
+}
+
+</style>
+
+
+<h1 class="page-title">USER LIST</h1>
+
+<div class="table-card">
+
+<form action="" method="post">
+
+{% csrf_token %}
+
+<table class="user-table">
+
+<tr>
+
+<th>SNo</th>
+<th>Name</th>
+<th>Email</th>
+<th>Contact</th>
+<th>Address</th>
+<th>Gender</th>
+<th>DOB</th>
+<th>District</th>
+<th>Place</th>
+<th>Photo</th>
+<th>Proof</th>
+
+</tr>
+
+{% for i in listdata %}
+
+<tr>
+
+<td>{{forloop.counter}}</td>
+
+<td>{{i.user_name}}</td>
+
+<td>{{i.user_email}}</td>
+
+<td>{{i.user_contact}}</td>
+
+<td>{{i.user_address}}</td>
+
+<td>
+
+<span class="gender-badge">
+
+{{i.user_gender}}
+
+</span>
+
+</td>
+
+<td>{{i.user_dob}}</td>
+
+<td>{{i.user_place.district.district_name}}</td>
+
+<td>{{i.user_place.place_name}}</td>
+
+<td>
+
+<img src="{{i.user_photo.url}}"
+class="profile-img">
+
+</td>
+
+<td>
+
+<img src="{{i.user_proof.url}}"
+class="profile-img">
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</form>
+
+</div>
+
+{% endblock content %}

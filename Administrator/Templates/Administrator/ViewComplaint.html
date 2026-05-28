@@ -1,0 +1,211 @@
+{% extends 'Administrator/Head.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+
+body{
+    background:#ece9fb;
+    font-family:Arial,sans-serif;
+    padding:40px 0;
+}
+
+.page-title{
+    text-align:center;
+    color:#6f42c1;
+    margin-bottom:30px;
+}
+
+.section-title{
+    text-align:center;
+    color:#6f42c1;
+    margin-bottom:20px;
+}
+
+.table-card{
+    max-width:1200px;
+    margin:auto;
+    background:white;
+    padding:30px;
+    border-radius:20px;
+    margin-bottom:35px;
+    box-shadow:0 6px 15px rgba(0,0,0,.08);
+
+    overflow-x:auto;
+}
+
+.complaint-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.complaint-table th{
+    background:#6f42c1;
+    color:white;
+    padding:16px;
+    text-align:center;
+}
+
+.complaint-table td{
+    padding:16px;
+    text-align:center;
+    border-bottom:1px solid #e5e5e5;
+}
+
+.complaint-table tr:nth-child(even){
+    background:#faf8ff;
+}
+
+.reply-btn{
+    background:#4a90e2;
+    color:white;
+    text-decoration:none;
+    padding:8px 14px;
+    border-radius:8px;
+}
+
+.replied-badge{
+    background:#22c55e;
+    color:white;
+    padding:8px 14px;
+    border-radius:20px;
+    font-size:13px;
+}
+
+</style>
+
+
+<h1 class="page-title">VIEW COMPLAINTS</h1>
+
+
+<!-- User Complaints -->
+
+<div class="table-card">
+
+<h2 class="section-title">User Complaints</h2>
+
+<table class="complaint-table">
+
+<tr>
+
+<th>SNo</th>
+<th>User</th>
+<th>Title</th>
+<th>Content</th>
+<th>Date</th>
+<th>Action</th>
+
+</tr>
+
+{% for i in userdata %}
+
+<tr>
+
+<td>{{forloop.counter}}</td>
+
+<td>{{i.userid.user_name}}</td>
+
+<td>{{i.complaint_title}}</td>
+
+<td>{{i.complaint_content}}</td>
+
+<td>{{i.complaint_date}}</td>
+
+<td>
+
+{% if i.complaint_status == 0 %}
+
+<a href="{% url 'Administrator:Reply' i.id %}"
+class="reply-btn">
+
+Reply
+
+</a>
+
+{% elif i.complaint_status == 1 %}
+
+<span class="replied-badge">
+
+Replied
+
+</span>
+
+{% endif %}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+
+
+<!-- Psychologist Complaints -->
+
+<div class="table-card">
+
+<h2 class="section-title">Psychologist Complaints</h2>
+
+<table class="complaint-table">
+
+<tr>
+
+<th>SNo</th>
+<th>Psychologist</th>
+<th>Title</th>
+<th>Content</th>
+<th>Date</th>
+<th>Action</th>
+
+</tr>
+
+{% for i in psychologistdata %}
+
+<tr>
+
+<td>{{forloop.counter}}</td>
+
+<td>{{i.psychologistid.psychologist_name}}</td>
+
+<td>{{i.complaint_title}}</td>
+
+<td>{{i.complaint_content}}</td>
+
+<td>{{i.complaint_date}}</td>
+
+<td>
+
+{% if i.complaint_status == 0 %}
+
+<a href="{% url 'Administrator:Reply' i.id %}"
+class="reply-btn">
+
+Reply
+
+</a>
+
+{% elif i.complaint_status == 1 %}
+
+<span class="replied-badge">
+
+Replied
+
+</span>
+
+{% endif %}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+{% endblock content %}

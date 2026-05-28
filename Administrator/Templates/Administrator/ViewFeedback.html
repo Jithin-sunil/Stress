@@ -1,0 +1,143 @@
+{% extends 'Administrator/Head.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+
+body{
+    background:#ece9fb;
+    font-family:Arial,sans-serif;
+    padding:40px 0;
+}
+
+.page-title{
+    text-align:center;
+    color:#6f42c1;
+    margin-bottom:30px;
+}
+
+.table-card{
+    max-width:1000px;
+    margin:auto;
+    background:white;
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 6px 15px rgba(0,0,0,.08);
+
+    overflow-x:auto;
+}
+
+.feedback-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.feedback-table th{
+    background:#6f42c1;
+    color:white;
+    padding:16px;
+    text-align:center;
+}
+
+.feedback-table td{
+    padding:16px;
+    text-align:center;
+    border-bottom:1px solid #e5e5e5;
+
+    word-wrap:break-word;
+    overflow-wrap:break-word;
+}
+
+.feedback-table tr:nth-child(even){
+    background:#faf8ff;
+}
+
+.user-badge{
+    background:#4a90e2;
+    color:white;
+    padding:7px 14px;
+    border-radius:20px;
+    font-size:13px;
+}
+
+.content-box{
+    background:#f8f5ff;
+    padding:10px;
+    border-radius:10px;
+}
+
+.date-badge{
+    background:#22c55e;
+    color:white;
+    padding:7px 12px;
+    border-radius:20px;
+    font-size:13px;
+}
+
+</style>
+
+
+<h1 class="page-title">VIEW FEEDBACK</h1>
+
+<div class="table-card">
+
+<form action="" method="post">
+
+<table class="feedback-table">
+
+<tr>
+
+<th>SNo</th>
+<th>User Name</th>
+<th>Content</th>
+<th>Date</th>
+
+</tr>
+
+{% for i in userdata %}
+
+<tr>
+
+<td>{{forloop.counter}}</td>
+
+<td>
+
+<span class="user-badge">
+
+{{i.userid.user_name}}
+
+</span>
+
+</td>
+
+<td>
+
+<div class="content-box">
+
+{{i.feedback_content}}
+
+</div>
+
+</td>
+
+<td>
+
+<span class="date-badge">
+
+{{i.feedback_date}}
+
+</span>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</form>
+
+</div>
+
+{% endblock content %}

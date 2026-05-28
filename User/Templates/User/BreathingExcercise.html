@@ -1,0 +1,302 @@
+{% extends 'User/Header.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+
+/* ---------- NIVARA DIGITAL BACKGROUND ---------- */
+
+body{
+
+background:
+radial-gradient(circle at 20% 25%, rgba(120,90,255,0.25), transparent 45%),
+radial-gradient(circle at 80% 75%, rgba(90,70,200,0.25), transparent 40%),
+linear-gradient(135deg,#faebf8,#ffffff,#fcf4ff);
+
+
+}
+
+
+/* ---------- BREATHING MODULE CARD ---------- */
+
+.gghhhhhh{
+
+width:460px;
+
+padding:65px 60px;
+
+text-align:center;
+
+background:linear-gradient(145deg,#1d1832,#17132a);
+
+border-radius:22px;
+
+border:1px solid rgba(255,255,255,0.05);
+
+box-shadow:
+0 35px 80px rgba(0,0,0,0.7),
+0 0 40px rgba(120,100,255,0.15);
+
+position:relative;
+
+}
+
+
+/* glowing border accent */
+
+.gghhhhhh::before{
+
+content:"";
+
+position:absolute;
+
+inset:-1px;
+
+border-radius:22px;
+
+background:linear-gradient(120deg,#6f5cff,transparent,#6f5cff);
+
+opacity:.2;
+
+z-index:-1;
+
+}
+
+
+/* ---------- TITLE ---------- */
+
+h1{
+
+font-size:26px;
+
+font-weight:600;
+
+letter-spacing:1.5px;
+
+margin-bottom:55px;
+
+color:#c9c4ff;
+
+}
+
+
+/* ---------- BOX BREATHING GUIDE ---------- */
+
+.breath-circle{
+
+width:180px;
+height:180px;
+
+border-radius:50%;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+margin:auto;
+
+font-size:20px;
+font-weight:500;
+
+color:#ffffff;
+
+background:radial-gradient(circle,#6b5cff,#2b2557);
+
+border:2px solid rgba(160,150,255,0.35);
+
+box-shadow:
+0 0 30px rgba(120,100,255,0.5),
+0 0 90px rgba(120,100,255,0.25),
+inset 0 0 30px rgba(255,255,255,0.05);
+
+transition:all 4s ease-in-out;
+
+position:relative;
+
+}
+
+
+/* square box breathing frame */
+
+.breath-circle::before{
+
+content:"";
+
+position:absolute;
+
+width:260px;
+height:260px;
+
+border-radius:16px;
+
+border:2px solid rgba(160,150,255,0.15);
+
+}
+
+
+/* outer aura */
+
+.breath-circle::after{
+
+content:"";
+
+position:absolute;
+
+width:240px;
+height:240px;
+
+border-radius:50%;
+
+border:1px solid rgba(160,150,255,0.15);
+
+}
+
+
+/* ---------- BREATH EXPANSION ---------- */
+
+.expand{
+
+transform:scale(1.45);
+
+box-shadow:
+
+0 0 60px rgba(150,130,255,0.8),
+0 0 120px rgba(120,100,255,0.45),
+inset 0 0 40px rgba(255,255,255,0.08);
+
+}
+
+
+/* ---------- CONTROLS ---------- */
+
+.controls{
+
+margin-top:65px;
+
+display:flex;
+
+justify-content:center;
+
+gap:20px;
+
+}
+
+
+/* ---------- CLASSY CONTROL BUTTONS ---------- */
+
+button{
+
+padding:12px 34px;
+
+font-size:14px;
+
+font-weight:600;
+
+border-radius:14px;
+
+border:none;
+
+background:#f5f6ff;
+
+color:#2a2555;
+
+cursor:pointer;
+
+box-shadow:
+0 6px 14px rgba(0,0,0,0.25);
+
+transition:all .25s;
+
+}
+
+
+/* start button */
+
+.start{
+
+background:linear-gradient(145deg,#ffffff,#e9e9ff);
+
+}
+
+
+/* stop button */
+
+.stop{
+
+background:linear-gradient(145deg,#ffffff,#f2efff);
+
+}
+
+
+/* hover effect */
+
+button:hover{
+
+transform:translateY(-3px);
+
+box-shadow:
+0 12px 25px rgba(0,0,0,0.45);
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="gghhhhhh">
+
+<h1> Nivara Breathing </h1>
+
+<div id="circle" class="breath-circle">
+Inhale
+</div>
+
+<div class="controls">
+<button class="start" onclick="startBreathing()">Start</button>
+<button class="stop" onclick="stopBreathing()">Stop</button>
+</div>
+
+</div>
+
+<script>
+
+let breathingInterval;
+let inhale = true;
+
+function startBreathing(){
+
+    const circle = document.getElementById("circle");
+
+    breathingInterval = setInterval(()=>{
+
+        if(inhale){
+            circle.classList.add("expand");
+            circle.innerText = "Inhale";
+        }else{
+            circle.classList.remove("expand");
+            circle.innerText = "Exhale";
+        }
+
+        inhale = !inhale;
+
+    },4000);
+
+}
+
+function stopBreathing(){
+
+    clearInterval(breathingInterval);
+
+    const circle = document.getElementById("circle");
+    circle.classList.remove("expand");
+    circle.innerText = "Paused";
+
+}
+
+</script>
+
+</body>
+</html>
+{% endblock content %}

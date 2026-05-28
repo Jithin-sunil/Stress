@@ -1,0 +1,21 @@
+<table border="10" align="center" width="30%">
+        <tr>
+            <td>SNo</td>
+            <td>Photo</td>
+            <td>Name</td>
+            <td>Email</td>
+            <td>Contact</td>
+            <td>Action</td>
+        </tr>
+        {% for i in data %}
+         <tr>
+            <td>{{forloop.counter}}</td>
+            <td><img src="{{i.psychologist_photo.url}}" width="30%"></td>
+            <td>{{i.psychologist_name}}</td>
+            <td>{{i.psychologist_email}}</td>
+            <td>{{i.psychologist_contact}}</td>
+            <td><a href="{% url 'User:ViewSlot' i.id %}">ViewSlot</a></td>
+            
+        </tr>
+        {% endfor %}
+    </table>

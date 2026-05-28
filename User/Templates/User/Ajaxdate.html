@@ -1,0 +1,11 @@
+{% for i in slot %}
+{% if i.id in booked %}
+<option disabled>
+    {{i.slot_fromtime}}-{{i.slot_totime}}(Booked)
+</option>
+{% else %}
+<option value="{{i.id}}">
+    {{i.slot_fromtime}}-{{i.slot_totime}}
+</option>
+{% endif %}
+{% endfor %}

@@ -1,0 +1,122 @@
+{% extends 'User/Head.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+
+body{
+  
+  background:linear-gradient(135deg,#ece9f7,#f8f5fd);
+  
+}
+
+/* Container */
+.container{
+  text-align:center;
+}
+
+/* Heading */
+.title{
+  font-size:32px;
+  color:#6f42c1;
+  margin-bottom:10px;
+  font-weight:600;
+}
+
+.subtitle{
+  color:#7a738a;
+  font-size:16px;
+  margin-bottom:40px;
+}
+
+/* Grid Layout */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2, 240px); /* bigger width */
+  gap:30px; /* more spacing */
+  justify-content:center;
+}
+
+/* Cards */
+.card{
+  text-decoration:none;
+  padding:50px 20px; /* increased height */
+  border-radius:22px;
+  color:white;
+  font-weight:600;
+  font-size:20px; /* bigger text */
+  transition:0.3s;
+  position:relative;
+  overflow:hidden;
+}
+
+/* Different styles */
+.soft{
+  background:linear-gradient(135deg,#a18cd1,#fbc2eb);
+}
+
+.normal{
+  background:linear-gradient(135deg,#84fab0,#8fd3f4);
+}
+
+.medium{
+  background:linear-gradient(135deg,#f093fb,#f5576c);
+}
+
+.hard{
+  background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+}
+
+.image{
+  background:linear-gradient(135deg,#cfd9df,#e2ebf0);
+  color:#555;
+}
+
+/* Hover Effect */
+.card:hover{
+  transform:translateY(-8px) scale(1.05);
+  box-shadow:0 15px 35px rgba(0,0,0,0.12);
+}
+
+/* Decorative Shape */
+.card::after{
+  content:'';
+  position:absolute;
+  width:100px;
+  height:100px;
+  background:rgba(255,255,255,0.2);
+  border-radius:50%;
+  top:-30px;
+  right:-30px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="title">Nivara AI</div>
+  <div class="subtitle">Choose your comfort level</div>
+
+  <div class="grid">
+
+    <a href="{% url 'User:ViewQuestion' 24 %}" class="card soft">Soft</a>
+
+    <a href="{% url 'User:ViewQuestion' 25 %}" class="card normal">Normal</a>
+
+    <a href="{% url 'User:ViewQuestion' 26 %}" class="card medium">Medium</a>
+
+    <a href="{% url 'User:ViewQuestion' 27 %}" class="card hard">Hard</a>
+
+    <!-- <a href="#" class="card image">Image Mode</a>
+
+    <a href="#" class="card image">Voice Mode</a> -->
+  </div>
+
+</div>
+
+</body>
+</html>
+{% endblock content %}

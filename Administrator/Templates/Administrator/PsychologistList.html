@@ -1,0 +1,204 @@
+{% extends 'Administrator/Head.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+
+body{
+    background:#ece9fb;
+    font-family:Arial,sans-serif;
+    padding:40px 0;
+}
+
+.page-title{
+    text-align:center;
+    color:#6f42c1;
+    margin-bottom:30px;
+}
+
+.table-card{
+    max-width:1400px;
+    margin:auto;
+    background:white;
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 6px 15px rgba(0,0,0,.08);
+
+    overflow-x:auto;      /* enables scroll */
+}
+
+.psychologist-table{
+    width:100%;
+    min-width:1200px;     /* prevents squeezing */
+    border-collapse:collapse;
+    table-layout:fixed;
+}
+
+.psychologist-table th{
+    background:#6f42c1;
+    color:white;
+    padding:14px;
+    text-align:center;
+
+    white-space:nowrap;
+}
+
+.psychologist-table td{
+    padding:14px;
+    text-align:center;
+    border-bottom:1px solid #e5e5e5;
+
+    word-wrap:break-word;
+    overflow-wrap:break-word;
+}
+
+/* optional widths */
+
+.psychologist-table td:nth-child(2){
+    min-width:120px;
+}
+
+.psychologist-table td:nth-child(3){
+    min-width:180px;
+}
+
+.psychologist-table td:nth-child(5){
+    min-width:180px;
+}
+
+.profile-img{
+    width:60px;
+    height:60px;
+    object-fit:cover;
+    border-radius:10px;
+    border:2px solid #e6ddff;
+}
+
+.accept-btn,
+.reject-btn{
+    padding:6px 10px;
+    font-size:13px;
+}
+.accept-btn{
+    background:#22c55e;
+    color:white;
+    text-decoration:none;
+    padding:6px 10px;
+    border-radius:5px;
+    font-size:13px;
+    display:inline-block;
+}
+
+.reject-btn{
+    background:#ef4444;
+    color:white;
+    text-decoration:none;
+   padding:6px 10px;
+    font-size:13px;
+    border-radius:5px;
+    display:inline-block;
+}
+
+.accept-btn:hover{
+    background:#16a34a;
+}
+
+.reject-btn:hover{
+    background:#dc2626;
+}
+
+</style>
+
+
+<h1 class="page-title">PSYCHOLOGIST LIST</h1>
+
+<div class="table-card">
+
+<form action="" method="post">
+
+<table class="psychologist-table">
+
+<tr>
+
+<th>SNo</th>
+<th>Name</th>
+<th>Email</th>
+<th>Contact</th>
+<th>Address</th>
+<th>District</th>
+<th>Place</th>
+<th>Photo</th>
+<th>Proof</th>
+<th>Action</th>
+
+</tr>
+
+{% for i in listdata %}
+
+<tr>
+
+<td>{{forloop.counter}}</td>
+
+<td>{{i.psychologist_name}}</td>
+
+<td>{{i.psychologist_email}}</td>
+
+<td>{{i.psychologist_contact}}</td>
+
+<td>{{i.psychologist_address}}</td>
+
+<td>{{i.psychologist_place.district.district_name}}</td>
+
+<td>{{i.psychologist_place.place_name}}</td>
+
+<td>
+
+<img src="{{i.psychologist_photo.url}}"
+class="profile-img">
+
+</td>
+
+<td>
+
+<img src="{{i.psychologist_proof.url}}"
+class="profile-img">
+
+</td>
+
+<td>
+
+<a href="{% url 'Administrator:accept' i.id %}"
+class="accept-btn">
+
+Accept
+
+
+</a>
+
+<a href="{% url 'Administrator:reject' i.id %}"
+class="reject-btn">
+
+Reject
+
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</form>
+
+</div>
+
+{% if msg %}
+<script>
+alert("{{msg}}")
+window.location="{% url 'Administrator:PsychologistList' %}"
+</script>
+{% endif %}
+
+{% endblock content %}

@@ -1,0 +1,56 @@
+
+from django.urls import path,include
+from Administrator import views
+app_name="Administrator"
+urlpatterns = [
+   path('logout/',views.logout,name='logout'),
+   path('District/',views.District,name="District"),
+   path('Category/',views.Category,name="Category"),
+   path('AdminRegistration/',views.AdminRegistration,name="AdminRegistration"),
+   path('Brand/',views.Brand,name="Brand"),
+   path('Type/',views.Type,name="Type"),
+   path('deldistrict/<int:did>/',views.deldistrict,name="deldistrict"),
+   path('delcategory/<int:did>/',views.delcategory,name="delcategory"),
+   path('deladmin/<int:did>/',views.deladmin,name="deladmin"),
+   path('delbrand/<int:did>/',views.delbrand,name="delbrand"),
+   path('deltype/<int:did>/',views.deltype,name="deltype"),
+   path('editdistrict/<int:eid>/',views.editdistrict,name="editdistrict"),
+   path('editadmin/<int:eid>/',views.editadmin,name="editadmin"),
+   path('editcategory/<int:eid>/',views.editcategory,name="editcategory"),
+   path('editbrand/<int:eid>/',views.editbrand,name="editbrand"),
+   path('edittype/<int:eid>/',views.edittype,name="edittype"),
+   path('Place/',views.Place,name="Place"),
+   path('SubCategory/',views.SubCategory,name="SubCategory"),
+   path('delplace/<int:did>/',views.delplace,name="delplace"),
+   path('editplace/<int:eid>/',views.editplace,name="editplace"),
+   path('Product/',views.Product,name="Product"),
+   path('delsubcategory/<int:did>/',views.delsubcategory,name="delsubcategory"),
+   path('editsubcategory/<int:eid>/',views.editsubcategory,name="editsubcategory"),
+   path('UserList/',views.UserList,name="UserList"),
+   path('AdminHome/',views.AdminHome,name="AdminHome"),
+   path('ViewComplaint/',views.ViewComplaint,name="ViewComplaint"),
+   path('Reply/<int:rid>/',views.Reply,name="Reply"),
+   path('ViewFeedback/',views.ViewFeedback,name="ViewFeedback"),
+   path('PsychologistList/',views.PsychologistList,name="PsychologistList"),
+   path('accept/<int:id>/',views.accept,name="accept"),
+   path('reject/<int:id>/',views.reject,name="reject"),
+
+   # path('QuestionLevel/',views.QuestionLevel,name="QuestionLevel"),
+   # path('delquestionlevel/<int:did>/',views.delquestionlevel,name="delquestionlevel"),
+   # path('Question/',views.Question,name="Question"),
+   # path('delquestion/<int:did>/',views.delquestion,name="delquestion"),
+   # path('Options/<int:qid>/',views.Options,name="Options"),
+   # path('deloptions/<int:did>/<int:qid>/',views.deloptions,name="deloptions"),
+
+   path('QuestionLevel/',views.QuestionLevel,name="QuestionLevel"),
+   path('EditQuestionLevel/<int:eid>',views.EditQuestionLevel,name="EditQuestionLevel"),
+   path('DeleteQuestionLevel/<int:qid>',views.DeleteQuestionLevel,name="DeleteQuestionLevel"),
+
+   path('Question/',views.Question,name="Question"),
+   path('EditQuestion/<int:eid>',views.EditQuestion,name="EditQuestion"),
+   path('DeleteQuestion/<int:qid>/',views.DeleteQuestion,name="DeleteQuestion"),
+
+   path('Option/<int:qid>/',views.Option,name="Option"),
+   path('DeleteOption/<int:did>/<int:qid>/',views.DeleteOption,name="DeleteOption"),
+   path('Remedy/',views.Remedy,name="Remedy"),
+]
