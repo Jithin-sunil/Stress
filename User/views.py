@@ -205,7 +205,7 @@ def ajaxstar(request):
     user_review=request.GET.get('user_review')
     pid=request.GET.get('pid')
     # wdata=tbl_booking.objects.get(id=pid)
-    tbl_rating.objects.create(user=tbl_user.objects.get(id=request.session['uid']),user_review=user_review,rating_data=rating_data,psychologist=tbl_psychologist.objects.get(id=pid))
+    tbl_rating.objects.create(user=tbl_newuser.objects.get(id=request.session['uid']),user_review=user_review,rating_data=rating_data,psychologist=tbl_psychologist.objects.get(id=pid))
     stardata=tbl_rating.objects.filter(psychologist=pid).order_by('-datetime')
     return render(request,"User/AjaxRating.html",{'data':stardata,'ar':parray})
 
